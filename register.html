@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Rzeszow Event Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f425af;
+            --background-dark: #22101c;
+            --surface-dark: #392833;
+            --text-secondary: #ba9cb0;
+        }
+        
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            background-color: var(--background-dark);
+            color: #fff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .navbar {
+            background-color: rgba(34, 16, 28, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--surface-dark);
+        }
+        
+        .background-image {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        
+        .background-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom right, rgba(34, 16, 28, 0.95), rgba(34, 16, 28, 0.8), rgba(244, 37, 175, 0.3));
+            z-index: 1;
+        }
+        
+        .background-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .register-card {
+            background: rgba(57, 40, 51, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.5rem;
+            padding: 2rem;
+        }
+        
+        .form-control {
+            background: rgba(34, 16, 28, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: #fff;
+            padding: 12px 20px 12px 48px;
+        }
+        
+        .form-control:focus {
+            background: rgba(34, 16, 28, 0.5);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 0 0.2rem rgba(244, 37, 175, 0.25);
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        
+        .btn-primary-custom {
+            background: var(--primary);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(244, 37, 175, 0.25);
+        }
+        
+        .btn-primary-custom:hover {
+            background: rgba(244, 37, 175, 0.9);
+        }
+        
+        .btn-social {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px 20px;
+            color: #fff;
+        }
+        
+        .btn-social:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        .avatar-stack {
+            display: flex;
+            gap: -12px;
+        }
+        
+        .avatar-stack img {
+            border: 2px solid var(--background-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid px-4 px-lg-5">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <div class="text-primary">
+                    <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <span class="d-none d-sm-inline fw-bold">Rzeszow Event Planner</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-4">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="all-events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="forum-access.html">Forum</a></li>
+                </ul>
+                <a href="signin.html" class="btn btn-sm" style="background: rgba(244,37,175,0.1); color: var(--primary); border-radius: 50px; padding: 8px 20px;">Log In</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Background Image -->
+    <div class="background-image">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsrMTHI9nXRX2ryBk9_OOPSUZ-tcLtkUGOSBoryeNFD2D39fq7UKw-CdHj2GjB69RSZZft9H1RoU6TppXUVWiJSH9yAGKebxz_6b8ftD1BMJ47ye19N20h84cb0fJQSFyUM8hUjJK2QDolBBNVU_fZ-e5qSxjIW6uCI4jcVVOQpoLP84q8soHAollDq4p6Xfcwk0RU936SNf6pTRNthT_TpEyjD7ZWo-Er9hT8iask8bcyjBUELmLG3rW8woaVrIM_Efooeass57U" 
+             alt="Background">
+    </div>
+
+    <!-- Main Content -->
+    <main class="position-relative" style="z-index: 10; min-height: calc(100vh - 76px); display: flex; align-items: center; padding: 2rem 0;">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Left Side: Heading & Intro -->
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="text-center text-lg-start">
+                        <h1 class="display-2 fw-black mb-3">
+                            Join the <span style="color: var(--primary);">Event</span>
+                        </h1>
+                        <p class="lead text-white-50 mb-4">
+                            Create your account to manage events, RSVP to the hottest events in Rzeszow, and connect with the community.
+                        </p>
+                        <div class="d-none d-lg-flex gap-4 justify-content-lg-start justify-content-center mt-4">
+                            <div class="d-flex" style="margin-left: -12px;">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvdY2JHbCdaAVC806wb0Ibo9M13fB4z85KkwJYAMLqmX5dl6Hg66r_K1debukAN044eNksf0IH5B075ib14yfBaaWiImoUeQwDNzWLdSOgReCVgZ5z14T7_PpEO_d4YpdodQUbcHunzoP9ZdHHG4dF0Vq88AUin-rJlKhN9cq8MU41A69qMO0AEwmJ3V8OGYm-Hehx-Y_D5ImggTVylbgq7PKljSA6-AajAiu9rQxhgLgQR7IRRYwpTRN1jPI_kSbi5p5O13gtqds" 
+                                     alt="User" class="rounded-circle border border-dark" style="width: 40px; height: 40px; object-fit: cover; margin-left: -12px;">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5eN8BD5sVBJQiqxyfT8EsteAt0b1itf0ID9dORC4-7nq12mSdcj64I5Y4wvaiYEx7OzxXt0rWq7nPYk0CjQb1J7yxfu6RrxvOY4vBsQ4lo8BYeXPQa9AEyir1O8xk6niAoHYWVLy3HQ3t2ytVFu1J8I2jc4b-ca9QbzgBY8QIPScTRRnTgIUGS5ejvPD9YtYDcQSze1nNdV4h8kxlV2Vt3vbIf1qkcNycSvU1KcneGkK_tEE6lU0Tduo491Usy7Obwjz3qJ-CatE" 
+                                     alt="User" class="rounded-circle border border-dark" style="width: 40px; height: 40px; object-fit: cover; margin-left: -12px;">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-stu5JL3eFFU9R7s-ePzM2geA6X1OB072njDv_D1IT_PFeSbgGVpduDOarQLLneC2XF9H2I3pgvR-meBKGsUeeWzVkX_jIQzM3bsTEsnWkEtz_b-P4JrjPhx1v4qNaTUTRHtm3FlwKl71AfA7vawdDFzQrcfVoj9JpLtWotQjOa4puOc8MKGG6hxh35cE5aPOlB7udMjJPU5xEE9mwO9O8FGe5Js0YOno1BRQ3LWtxg62fmIr94QC5WH-ZXbyhr3vDqVvp1ZSlVo" 
+                                     alt="User" class="rounded-circle border border-dark" style="width: 40px; height: 40px; object-fit: cover; margin-left: -12px;">
+                                <div class="rounded-circle border border-dark d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: var(--surface-dark); font-size: 12px; font-weight: 700; margin-left: -12px;">+2k</div>
+                            </div>
+                            <p class="text-white-50 small my-auto">Event organizers joined last month</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Side: Registration Card -->
+                <div class="col-lg-6">
+                    <div class="register-card">
+                        <h3 class="h2 fw-bold mb-4">Create Account</h3>
+                        <form id="registerForm">
+                            <div class="mb-4">
+                                <label class="form-label small fw-medium mb-2 ms-2" style="color: var(--text-secondary);">Full Name</label>
+                                <div class="position-relative">
+                                    <span class="material-symbols-outlined input-icon">person</span>
+                                    <input type="text" class="form-control" id="displayName" placeholder="Your full name" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label small fw-medium mb-2 ms-2" style="color: var(--text-secondary);">Username</label>
+                                <div class="position-relative">
+                                    <span class="material-symbols-outlined input-icon">alternate_email</span>
+                                    <input type="text" class="form-control" id="username" placeholder="@username" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label small fw-medium mb-2 ms-2" style="color: var(--text-secondary);">Email Address</label>
+                                <div class="position-relative">
+                                    <span class="material-symbols-outlined input-icon">mail</span>
+                                    <input type="email" class="form-control" id="email" placeholder="yourname@example.com" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-6">
+                                    <label class="form-label small fw-medium mb-2 ms-2" style="color: var(--text-secondary);">Age</label>
+                                    <div class="position-relative">
+                                        <span class="material-symbols-outlined input-icon">cake</span>
+                                        <input type="number" class="form-control" id="age" placeholder="Age" min="13" max="120">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-medium mb-2 ms-2" style="color: var(--text-secondary);">Gender</label>
+                                    <div class="position-relative">
+                                        <span class="material-symbols-outlined input-icon">person</span>
+                                        <select class="form-control" id="gender" style="padding-left: 45px;">
+                                            <option value="">Prefer not to say</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="non-binary">Non-binary</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label small fw-medium mb-2 ms-2" style="color: var(--text-secondary);">Location</label>
+                                <div class="position-relative">
+                                    <span class="material-symbols-outlined input-icon">location_on</span>
+                                    <input type="text" class="form-control" id="location" placeholder="City, Country">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label small fw-medium mb-2 ms-2" style="color: var(--text-secondary);">Profile Photo</label>
+                                <div class="image-upload-area" id="profileImageUploadArea" style="cursor: pointer; border: 2px dashed var(--border-dark); border-radius: 12px; padding: 20px; text-align: center; transition: all 0.3s;">
+                                    <span class="material-symbols-outlined mb-2" style="font-size: 48px; color: var(--primary);">image</span>
+                                    <p class="text-white mb-1" id="profileUploadText">Click to upload profile photo</p>
+                                    <p class="text-white-50 small mb-0">PNG, JPG up to 5MB</p>
+                                    <input type="file" id="profileImage" class="d-none" accept="image/*">
+                                </div>
+                                <div id="profileImagePreview" class="mt-3 text-center" style="display: none;">
+                                    <img id="profilePreviewImg" src="" alt="Profile Preview" style="max-width: 150px; max-height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label small fw-medium mb-2 ms-2" style="color: var(--text-secondary);">Password</label>
+                                <div class="position-relative">
+                                    <span class="material-symbols-outlined input-icon">lock</span>
+                                    <input type="password" class="form-control pe-5" id="password" placeholder="Create a strong password" required>
+                                    <span class="material-symbols-outlined" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); cursor: pointer;" id="togglePassword">visibility</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label small fw-medium mb-2 ms-2" style="color: var(--text-secondary);">Confirm Password</label>
+                                <div class="position-relative">
+                                    <span class="material-symbols-outlined input-icon">lock_reset</span>
+                                    <input type="password" class="form-control" id="confirmPassword" placeholder="Repeat password" required>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary-custom w-100 mb-3 d-flex align-items-center justify-content-center gap-2" id="registerBtn">
+                                <span>Get Started</span>
+                                <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+                            </button>
+                            
+                            <div class="d-flex align-items-center gap-3 my-3">
+                                <hr class="flex-grow-1" style="border-color: rgba(255,255,255,0.1);">
+                                <span class="text-uppercase small fw-medium" style="color: var(--text-secondary); font-size: 10px; letter-spacing: 1px;">Or register with</span>
+                                <hr class="flex-grow-1" style="border-color: rgba(255,255,255,0.1);">
+                            </div>
+                            
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <button type="button" id="googleRegisterBtn" class="btn btn-social w-100 d-flex align-items-center justify-content-center gap-2">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                        </svg>
+                                        <span class="small">Google</span>
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-social w-100 d-flex align-items-center justify-content-center gap-2">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                                        </svg>
+                                        <span class="small">Facebook</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="text-center mt-4">
+                            <p class="text-white-50 small mb-0">
+                                Already have an account? 
+                                <a href="signin.html" class="text-decoration-none fw-semibold" style="color: var(--primary);">Log In</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="position-relative" style="z-index: 10; background: rgba(34, 16, 28, 0.95); border-top: 1px solid rgba(255,255,255,0.05); padding: 1.5rem 0;">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-4 text-white-50 small">
+                <span>© 2024 Rzeszow Event Planner.</span>
+                <div class="d-flex gap-4">
+                    <a href="#" class="text-white-50 text-decoration-none">Privacy Policy</a>
+                    <a href="#" class="text-white-50 text-decoration-none">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Firebase Functions -->
+    <script src="auth.js"></script>
+    
+    <script>
+        // Profile image upload functionality
+        const profileImageUploadArea = document.getElementById('profileImageUploadArea');
+        const profileImageInput = document.getElementById('profileImage');
+        const profileUploadText = document.getElementById('profileUploadText');
+        const profileImagePreview = document.getElementById('profileImagePreview');
+        const profilePreviewImg = document.getElementById('profilePreviewImg');
+        
+        profileImageUploadArea.addEventListener('click', function() {
+            profileImageInput.click();
+        });
+        
+        profileImageInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                profileUploadText.textContent = file.name;
+                
+                // Preview image
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    profilePreviewImg.src = event.target.result;
+                    profileImagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                profileUploadText.textContent = 'Click to upload profile photo';
+                profileImagePreview.style.display = 'none';
+            }
+        });
+        
+        // Drag and drop for profile image
+        profileImageUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            profileImageUploadArea.style.background = 'rgba(244, 37, 175, 0.1)';
+            profileImageUploadArea.style.borderColor = 'var(--primary)';
+        });
+        
+        profileImageUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            profileImageUploadArea.style.background = 'transparent';
+            profileImageUploadArea.style.borderColor = 'var(--border-dark)';
+        });
+        
+        profileImageUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            profileImageUploadArea.style.background = 'transparent';
+            profileImageUploadArea.style.borderColor = 'var(--border-dark)';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                profileImageInput.files = files;
+                const file = files[0];
+                profileUploadText.textContent = file.name;
+                
+                // Preview image
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    profilePreviewImg.src = event.target.result;
+                    profileImagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Register form handler
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const displayName = document.getElementById('displayName').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const age = document.getElementById('age').value ? parseInt(document.getElementById('age').value) : null;
+            const gender = document.getElementById('gender').value;
+            const location = document.getElementById('location').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const profileImageFile = document.getElementById('profileImage').files[0];
+            const registerBtn = document.getElementById('registerBtn');
+            const originalText = registerBtn.innerHTML;
+            
+            // Validate username
+            if (!username) {
+                alert('Username is required!');
+                return;
+            }
+            
+            if (username.startsWith('@')) {
+                alert('Username should not start with @');
+                return;
+            }
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters!');
+                return;
+            }
+            
+            // Disable button and show loading
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating account...';
+            
+            try {
+                // First create the user account
+                const result = await window.signUp(email, password, displayName);
+                
+                if (result && result.success) {
+                    const user = result.user;
+                    
+                    // Process profile image if provided
+                    let photoBase64 = null;
+                    if (profileImageFile) {
+                        try {
+                            const imageResult = await window.uploadEventImage(user.uid, profileImageFile);
+                            if (imageResult && imageResult.success) {
+                                photoBase64 = imageResult.url;
+                            }
+                        } catch (imgError) {
+                            console.error('Image upload error:', imgError);
+                            // Continue without image if upload fails
+                        }
+                    }
+                    
+                    // Update user profile with additional information
+                    try {
+                        const profileData = {
+                            email: email,
+                            displayName: displayName,
+                            username: username,
+                            age: age,
+                            gender: gender || null,
+                            location: location || null,
+                            photoURL: photoBase64,
+                            emailVerified: false,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        
+                        // Use set with merge to ensure all fields are saved
+                        await window.firebaseDb.collection('users').doc(user.uid).set(profileData, { merge: true });
+                        console.log('Profile data saved successfully:', profileData);
+                    } catch (profileError) {
+                        console.error('Profile save error:', profileError);
+                        // Try one more time with just the essential fields
+                        try {
+                            await window.firebaseDb.collection('users').doc(user.uid).set({
+                                username: username,
+                                age: age,
+                                gender: gender || null,
+                                location: location || null,
+                                photoURL: photoBase64
+                            }, { merge: true });
+                            console.log('Profile data saved with retry');
+                        } catch (retryError) {
+                            console.error('Profile save retry error:', retryError);
+                            alert('Warning: Account created but some profile information may not be saved. You can update it later in your profile.');
+                        }
+                    }
+                    
+                    // Store email for verification page
+                    sessionStorage.setItem('pendingVerificationEmail', email);
+                    
+                    // Redirect to email verification page
+                    window.location.href = 'email-verification.html?email=' + encodeURIComponent(email);
+                } else {
+                    const errorMsg = result ? result.error : 'Unknown error occurred';
+                    alert('Registration failed: ' + errorMsg);
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed: ' + (error.message || error));
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = originalText;
+            }
+        });
+        
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = 'visibility_off';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = 'visibility';
+            }
+        });
+        
+        // Google Sign In button handler function (for registration)
+        async function handleGoogleRegister(btn) {
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
+            
+            try {
+                const result = await window.signInWithGoogle();
+                
+                if (result && result.success) {
+                    // Google accounts are automatically verified
+                    alert('Registration successful! Redirecting to dashboard...');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    const errorMsg = result ? result.error : 'Unknown error occurred';
+                    if (errorMsg !== 'Sign in was cancelled.') {
+                        alert('Google sign in failed: ' + errorMsg);
+                    }
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
+                }
+            } catch (error) {
+                console.error('Google sign in error:', error);
+                alert('An error occurred: ' + (error.message || error));
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
+        
+        // Google Sign In button (for registration)
+        const googleRegisterBtn = document.getElementById('googleRegisterBtn');
+        if (googleRegisterBtn) {
+            googleRegisterBtn.addEventListener('click', function() {
+                handleGoogleRegister(this);
+            });
+        }
+        
+        // Check if user is already logged in
+        if (window.firebaseAuth) {
+            window.firebaseAuth.onAuthStateChanged((user) => {
+                if (user) {
+                    window.location.href = 'dashboard.html';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

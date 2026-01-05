@@ -1,0 +1,88 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Events collection
+    match /events/{eventId} {
+      // Anyone can read public events
+      // Also allow reading all events for admin panel (no auth check for admin)
+      allow read: if resource.data.isPublic == true || 
+                     (request.auth != null && request.auth.uid == resource.data.createdBy) ||
+                     true; // Allow all reads for admin panel
+      
+      // Only authenticated users can create events
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.createdBy;
+      
+      // Only event creator can update/delete (or admin)
+      allow update, delete: if request.auth != null && 
+                                request.auth.uid == resource.data.createdBy;
+      
+      // Comments subcollection
+      match /comments/{commentId} {
+        // Anyone can read comments of public events
+        allow read: if get(/databases/$(database)/documents/events/$(eventId)).data.isPublic == true ||
+                       (request.auth != null && 
+                        request.auth.uid == get(/databases/$(database)/documents/events/$(eventId)).data.createdBy);
+        
+        // Authenticated users can create comments
+        allow create: if request.auth != null && 
+                         request.auth.uid == request.resource.data.userId;
+        
+        // Users can update/delete their own comments
+        allow update, delete: if request.auth != null && 
+                                  request.auth.uid == resource.data.userId;
+      }
+      
+      // RSVPs subcollection
+      match /rsvps/{rsvpId} {
+        // Event creator and RSVP owner can read
+        allow read: if request.auth != null && 
+                       (request.auth.uid == resource.data.userId ||
+                        request.auth.uid == get(/databases/$(database)/documents/events/$(eventId)).data.createdBy);
+        
+        // Authenticated users can create RSVPs
+        allow create: if request.auth != null && 
+                         request.auth.uid == request.resource.data.userId;
+        
+        // Users can update/delete their own RSVPs
+        allow update, delete: if request.auth != null && 
+                                 request.auth.uid == resource.data.userId;
+      }
+    }
+    
+    // Forum posts collection
+    match /forum/{postId} {
+      // Anyone can read forum posts
+      allow read: if true;
+      
+      // Only authenticated users can create posts
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+      
+      // Users can update/delete their own posts
+      allow update, delete: if request.auth != null && 
+                                request.auth.uid == resource.data.userId;
+      
+      // Replies subcollection
+      match /replies/{replyId} {
+        // Anyone can read replies
+        allow read: if true;
+        
+        // Authenticated users can create replies
+        allow create: if request.auth != null && 
+                         request.auth.uid == request.resource.data.userId;
+        
+        // Users can update/delete their own replies
+        allow update, delete: if request.auth != null && 
+                                  request.auth.uid == resource.data.userId;
+      }
+    }
+  }
+}
+

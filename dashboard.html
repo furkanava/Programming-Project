@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Rzeszow Event Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f425af;
+            --background-dark: #22101c;
+            --card-dark: #392833;
+            --text-subtle: #ba9cb0;
+        }
+        
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            background-color: var(--background-dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: rgba(34, 16, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--card-dark);
+        }
+        
+        .welcome-card {
+            background: linear-gradient(to right, var(--background-dark), var(--card-dark), rgba(244, 37, 175, 0.2));
+            border: 1px solid var(--card-dark);
+            border-radius: 1rem;
+            padding: 2rem;
+        }
+        
+        .stat-card {
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .dark .stat-card {
+            background: var(--card-dark);
+            border: none;
+        }
+        
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .event-card {
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .dark .event-card {
+            background: var(--card-dark);
+            border: none;
+        }
+        
+        .event-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .event-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            background-color: var(--card-dark);
+        }
+        
+        .activity-card {
+            background: var(--card-dark);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .activity-card:hover {
+            background: rgba(57, 40, 51, 0.8);
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .map-preview {
+            aspect-ratio: 1;
+            background-size: cover;
+            background-position: center;
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2), transparent);
+        }
+        
+        .floating-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(244, 37, 175, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        @media (min-width: 768px) {
+            .floating-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid px-4 px-md-5">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <div class="bg-primary bg-opacity-20 rounded-circle p-2">
+                    <span class="material-symbols-outlined" style="color: var(--primary); font-size: 24px;">celebration</span>
+                </div>
+                <span class="d-none d-sm-inline fw-bold">Rzeszow Event Planner</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-4">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="all-events.html">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="forum.html">Forum</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html">Profile</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-link text-white-50 p-0">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrmSEUCtfQps8H3F0_BuMkZcnt090BN3paZrzrIMbu5YnIH7bFomZCxQjOdlYVB9fMpBk0o6hoON55sg5ICOru4P_Vpdciu4cbZbQ4jn6sbFc4g3befqzM3xI8Bl5f1y1HOuE7R-aPUcsT_n0wZlcBdPJHvK1LzxOh-ASNo3LAijPDrxyKgsskt931Cf4145_3gt7EYgjPaNmWXzyyZvlQgbaJgkTH5jwYbbLevo0aQlnc5xJ4Lfo0ph8JjBNEbvxV7AInslYIAvM" 
+                         alt="Profile" class="avatar border border-primary border-opacity-50">
+                    <button class="btn btn-dark d-none d-md-inline-block logout-btn" style="background: var(--card-dark); border-radius: 50px; padding: 8px 20px;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid px-4 px-md-5 py-5">
+        <div class="row g-4">
+            <!-- Welcome Section -->
+            <div class="col-12">
+                <div class="welcome-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+                    <div>
+                        <h1 class="display-5 fw-black mb-2">Welcome back, Event Organizer!</h1>
+                        <p class="text-white-50 mb-0">Ready to create unforgettable memories in Rzeszow tonight?</p>
+                    </div>
+                    <a href="create-event.html" class="btn btn-primary btn-lg d-flex align-items-center gap-2" style="background: var(--primary); border-radius: 50px; padding: 12px 24px; box-shadow: 0 0 20px rgba(244,37,175,0.4);">
+                        <span class="material-symbols-outlined">add</span>
+                        Create Event
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="col-md-4">
+                <div class="stat-card h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <p class="text-white mb-0" style="opacity: 0.8;">Total Events</p>
+                        <span class="material-symbols-outlined" style="color: var(--primary);">event_note</span>
+                    </div>
+                    <h2 class="display-4 fw-bold mb-0">3</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <p class="text-white mb-0" style="opacity: 0.8;">Today's Events</p>
+                        <span class="material-symbols-outlined" style="color: var(--primary);">today</span>
+                    </div>
+                    <h2 class="display-4 fw-bold mb-2">1</h2>
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar" style="background: var(--primary); width: 33%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <p class="text-white mb-0" style="opacity: 0.8;">New Participants</p>
+                        <span class="material-symbols-outlined" style="color: var(--primary);">group_add</span>
+                    </div>
+                    <h2 class="display-4 fw-bold mb-2">5</h2>
+                    <div class="d-flex gap-2">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVwjhAvyq0mcLqE7ymBVw80t-ljZfOa4z171wnCo5kAfbERPkQddS2sooWRFtGs0ToZb78zss705HReqYvE_j6dcV1K5RIsHnWUTpRoATiwsMy7FmnAYYGjWWKqy-b-G9IUaSN042OC6iXXHs8EA_nOdU6_Hy3KF2L_UyStbsYRaFAtr6faazEAoqkRzlJWAT2hk9A8idK4dG2vARTiTPnn0irXI-Y6GyUnvCCK7p6p7mZcgLhcZxpI3AAh5ZnZCjN8c-t-oHqUzE" 
+                             alt="User" class="avatar border border-white border-2" style="width: 24px; height: 24px;">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBw04IGnyvEFZzG4ZQbDfSjqcy1IZpS-L2hZVDw6zfgoIl2eDYuDvSQLdpQSjJQWfMb9IRLImRJZKDZ4dSCUPKf0Y7nibxzmM60kMC5YojNAmxY3WM8jtBTu2wsuT8swMkW5sz9pC8Fobmv3g3u9HMeKu6SmaTh-zAc-IZcU7eF3Fokwf_vFJ75RWwGkGG7uRwNjRjdamS5jEPCkmRX1579vgheDfwFxSgVntRWqtdm2lwz0y8KlJ_2zazfIDgf6iUovr4eT5m2Hi0" 
+                             alt="User" class="avatar border border-white border-2" style="width: 24px; height: 24px;">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-9Y5s5hHwSOQMLq00ntY1tB8dHdolVMuN8A9JfDSWFnlaaXhyBHyHLDYW_Wt6bWcMPJofMWct_CdPGqce1jOsNy-m0wHRUdLzT0z-O3JHO6iK1P8Svm9siRmB2orZvsU_eikWHTDdjmXCTiPr6zeYLnQespqMalk0eFM-UONCWrMpC0zxdDSv1G6isDrKBooW1wUmZsKmD4uDa6NING6KGe20ZPsc4fBGgDx7aD0A47Qq_vizugueiiXbFfVCaspLsi0zZOxI4O8" 
+                             alt="User" class="avatar border border-white border-2" style="width: 24px; height: 24px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Section -->
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h3 fw-bold">Upcoming Events</h2>
+                    <a href="all-events.html" class="text-decoration-none" style="color: var(--primary);">View all</a>
+                </div>
+                <div class="row g-4" id="eventsContainer">
+                    <!-- Events will be loaded dynamically here -->
+                    <div class="col-12 text-center py-5" id="noEventsMessage" style="display: none;">
+                        <p class="text-white-50 mb-3">You haven't created any events yet.</p>
+                        <a href="create-event.html" class="btn btn-primary" style="background: var(--primary); border-radius: 50px;">
+                            <span class="material-symbols-outlined me-2">add</span>
+                            Create Your First Event
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="mb-4">
+                    <h3 class="h5 fw-bold mb-3 pb-2 border-bottom">Recent Activity</h3>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="activity-card d-flex gap-3">
+                            <div class="position-relative">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5TzdZYYkz1k65hcT5oAlkiRnEqJM_-Nsh5Z0RVa-WXmrjLLatdSj-dTWsj0u07EH6Jwxu8gYv8sIrxfZdw660Gx93uZIDI43mSyNLaE75BKNxlgmgZhVgKMgUVf6nRNdxkzJiOUtws17gnqJ6FkbjV_oCgIAFGR6udyIkI1aBQpDK-0Zs7-0RZQfKQ_eoJ5Al5FO_I8erm8CZWULIl9NdgffRuza7Y48zAaCj6gdTXvjCA0x2l2ApHr9jZvq82Z0YbHt7cHp45lI" 
+                                     alt="User" class="avatar">
+                                <span class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-dark" style="width: 12px; height: 12px;"></span>
+                            </div>
+                            <div>
+                                <p class="fw-semibold mb-1 small">Anna K.</p>
+                                <p class="text-white-50 small mb-1">Joined <span style="color: var(--primary);">Pub Crawl</span></p>
+                                <p class="text-white-50" style="font-size: 10px;">2 mins ago</p>
+                            </div>
+                        </div>
+                        <div class="activity-card d-flex gap-3">
+                            <div class="position-relative">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7qiR4dVTbLebID2yAdtT5Ej5aajkk4DiBUPtNTDdsGKuqDsm_bV-y-k2QWJwp_AJtmfectFb6I7FLy7lUPpMKZ12rGvxbWVeAkAPF9N1ZR_1ez67Z-0EzQ12h3R8Ndr8KUa-1WbPNFi5s5HL9x3WHBA8SlVipwLvLWZN089YPmP01GlrztmhurBiH_WRzPb3jTocPyyzz52-5ahRjmhXtbP91w7XaXhcThprnDRcC8HsSg1yTjE5AjtT8WUVuG8NYEWl8KiegTos" 
+                                     alt="User" class="avatar">
+                                <span class="position-absolute bottom-0 end-0 bg-primary rounded-circle border border-dark" style="width: 12px; height: 12px;"></span>
+                            </div>
+                            <div>
+                                <p class="fw-semibold mb-1 small">Piotr W.</p>
+                                <p class="text-white-50 small mb-1">Commented: "Is there parking?"</p>
+                                <p class="text-white-50" style="font-size: 10px;">15 mins ago</p>
+                            </div>
+                        </div>
+                        <div class="activity-card d-flex gap-3">
+                            <div class="position-relative">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMMV-b90c-2Q2gDMLE6GtPOb4dnqe_N1W22nHDIOVMbthE6Lh3p2HQ2KrAnYVafuRdIf59aaO5fTOkwRIuAdxMV9j-ARJ_e-Tg9qNkMgmkaxPKvFrtq8HCVuD8hYIWzNrHqLY8BnztQUtlm9urGvvzCbWpt56iAMP9ALVHQrP7BIJ-9owLmFxdlGXz6NAoa4z4uPdNpyNUPc0reJCcuU_08ArjN0cHuKk5Of3nDb9WLb23eQJOf3V2OF4yGaaizAr0E3sNUj3D6RE" 
+                                     alt="User" class="avatar">
+                                <span class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-dark" style="width: 12px; height: 12px;"></span>
+                            </div>
+                            <div>
+                                <p class="fw-semibold mb-1 small">Kasia M.</p>
+                                <p class="text-white-50 small mb-1">Joined <span style="color: var(--primary);">Board Games</span></p>
+                                <p class="text-white-50" style="font-size: 10px;">1 hour ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="map-preview" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCticL7vQ3ePGIDBdaNbFvQNmmH8KTyTmyB361uqWrjcASPBIwbTlj0Wcp3FWPsABA82pIzRIy3vQd93HM2bFMFU031l9xqolQ6_jAeqbq3B1meJQOkkAxy_TuUjhYezeS11hnBQ73YswdgVxhXDCXi9tQPbAYnQke1ZNDYe5VYlNsT83IAArfKponZfMe6hTw74w7cqC7XFfW47wgLaVoI3ZE5VdXBAXqE5CuwoygyvS91AGdvmJRjT47o4If2DQxG41vnCrD49qM');">
+                    <div class="map-overlay d-flex flex-column justify-content-end p-4 text-white">
+                        <p class="small fw-bold text-uppercase mb-1" style="color: var(--primary);">Explore</p>
+                        <h5 class="fw-bold mb-2">Events Map</h5>
+                        <button class="btn btn-sm w-100" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 50px; font-size: 12px; font-weight: 700;">Open Map</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <a href="create-event.html" class="floating-btn d-md-none text-decoration-none">
+        <span class="material-symbols-outlined">add</span>
+    </a>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Firebase Functions -->
+    <script src="auth.js"></script>
+    <script src="events.js"></script>
+    
+    <script>
+        // Check authentication and load events
+        function initDashboard() {
+            if (window.firebaseAuth) {
+                window.firebaseAuth.onAuthStateChanged((user) => {
+                    if (!user) {
+                        window.location.href = 'signin.html';
+                    } else {
+                        console.log('User authenticated, loading events...');
+                        // Load user events
+                        loadUserEvents();
+                    }
+                });
+            } else {
+                // Wait for Firebase to load
+                setTimeout(initDashboard, 100);
+            }
+        }
+        
+        initDashboard();
+        
+        // Load user's events
+        async function loadUserEvents() {
+            const result = await window.getUserEvents();
+            const eventsContainer = document.getElementById('eventsContainer');
+            const noEventsMessage = document.getElementById('noEventsMessage');
+            
+            if (!eventsContainer) return;
+            
+            if (result.success && result.events.length > 0) {
+                eventsContainer.innerHTML = '';
+                noEventsMessage.style.display = 'none';
+                
+                // Show up to 6 events
+                result.events.slice(0, 6).forEach(event => {
+                    eventsContainer.appendChild(createEventCard(event));
+                });
+            } else {
+                eventsContainer.innerHTML = '';
+                noEventsMessage.style.display = 'block';
+            }
+        }
+        
+        // Create event card element
+        function createEventCard(event) {
+            const col = document.createElement('div');
+            col.className = 'col-md-6';
+            
+            let dateStr = 'TBD';
+            let timeStr = event.startTime || 'TBD';
+            
+            if (event.date) {
+                if (event.date.toDate) {
+                    const date = event.date.toDate();
+                    dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                } else if (event.date.seconds) {
+                    const date = new Date(event.date.seconds * 1000);
+                    dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                } else if (event.dateString) {
+                    const date = new Date(event.dateString);
+                    dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                }
+            }
+            
+            let imageUrl = event.imageURL || event.imageBase64;
+            
+            // Check if it's base64 or URL
+            if (!imageUrl) {
+                imageUrl = `https://via.placeholder.com/400x200/392833/ffffff?text=${encodeURIComponent(event.title)}`;
+            } else if (imageUrl.startsWith('data:image')) {
+                // It's already base64, use it directly
+                // imageUrl is already set
+            } else if (!imageUrl.startsWith('http')) {
+                // Invalid URL, use placeholder
+                imageUrl = `https://via.placeholder.com/400x200/392833/ffffff?text=${encodeURIComponent(event.title)}`;
+            }
+            
+            col.innerHTML = `
+                <div class="event-card">
+                    <div class="position-relative" style="overflow: hidden; border-radius: 1rem 1rem 0 0; background: var(--card-dark); min-height: 200px;">
+                        <img src="${imageUrl}" 
+                             alt="${event.title}" 
+                             class="event-image" 
+                             style="width: 100%; height: 200px; object-fit: cover; display: block;"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/400x200/392833/ffffff?text=${encodeURIComponent(event.title)}';">
+                        <div class="position-absolute bottom-0 start-0 m-3 bg-white bg-opacity-20 backdrop-blur-sm px-2 py-1 rounded d-flex align-items-center gap-1" style="font-size: 12px;">
+                            <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
+                            <span>${dateStr}, ${timeStr}</span>
+                        </div>
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <div class="dropdown">
+                                <button class="btn btn-link text-white p-0 event-menu-btn" type="button" data-bs-toggle="dropdown" data-event-id="${event.id}" style="text-decoration: none;">
+                                    <span class="material-symbols-outlined">more_vert</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" style="background: var(--card-dark); border: 1px solid rgba(255,255,255,0.1);">
+                                    <li><a class="dropdown-item text-white edit-event-btn" href="#" data-event-id="${event.id}" style="color: #fff !important;"><span class="material-symbols-outlined me-2" style="font-size: 18px; vertical-align: middle;">edit</span>Edit</a></li>
+                                    <li><a class="dropdown-item text-white view-event-btn" href="#" data-event-id="${event.id}" style="color: #fff !important;"><span class="material-symbols-outlined me-2" style="font-size: 18px; vertical-align: middle;">visibility</span>View</a></li>
+                                    <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></li>
+                                    <li><a class="dropdown-item text-danger delete-event-btn" href="#" data-event-id="${event.id}" style="color: #ff4444 !important;"><span class="material-symbols-outlined me-2" style="font-size: 18px; vertical-align: middle;">delete</span>Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-bold mb-0">${event.title}</h5>
+                        </div>
+                        <p class="text-white small mb-3" style="opacity: 0.9;">
+                            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">location_on</span>
+                            ${event.location}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div class="d-flex gap-2 align-items-center">
+                                <span class="badge bg-secondary">${event.category || 'Event'}</span>
+                                <span class="text-white-50 small">${event.attendeeCount || 0} attending</span>
+                            </div>
+                            <button class="btn btn-sm text-white manage-btn" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; font-size: 12px; font-weight: 700;" data-event-id="${event.id}">Manage</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+        
+        // Event menu handlers
+        document.addEventListener('click', async function(e) {
+            // Edit event
+            if (e.target.closest('.edit-event-btn')) {
+                e.preventDefault();
+                const eventId = e.target.closest('.edit-event-btn').getAttribute('data-event-id');
+                if (eventId) {
+                    window.location.href = `edit-event.html?id=${eventId}`;
+                }
+            }
+            
+            // View event
+            if (e.target.closest('.view-event-btn')) {
+                e.preventDefault();
+                const eventId = e.target.closest('.view-event-btn').getAttribute('data-event-id');
+                if (eventId) {
+                    window.location.href = `event-detail.html?id=${eventId}`;
+                }
+            }
+            
+            // Delete event
+            if (e.target.closest('.delete-event-btn')) {
+                e.preventDefault();
+                const eventId = e.target.closest('.delete-event-btn').getAttribute('data-event-id');
+                if (eventId && confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+                    const result = await window.deleteEvent(eventId);
+                    if (result.success) {
+                        alert('Event deleted successfully!');
+                        loadUserEvents();
+                    } else {
+                        alert('Error: ' + result.error);
+                    }
+                }
+            }
+            
+            // Manage button
+            if (e.target.closest('.manage-btn')) {
+                const btn = e.target.closest('.manage-btn');
+                const eventId = btn.getAttribute('data-event-id');
+                
+                if (eventId) {
+                    window.location.href = `manage-events.html?event=${eventId}&tab=scanner`;
+                }
+            }
+            
+            // Logout button
+            if (e.target.closest('.logout-btn')) {
+                if (confirm('Are you sure you want to logout?')) {
+                    await window.signOut();
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

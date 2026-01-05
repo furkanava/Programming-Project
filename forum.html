@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum - Rzeszow Event Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f425af;
+            --background-dark: #22101c;
+            --card-dark: #2d1b27;
+        }
+        
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            background-color: var(--background-dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: rgba(34, 16, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #392833;
+        }
+        
+        .forum-card {
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            height: 100%;
+        }
+        
+        .dark .forum-card {
+            background: var(--card-dark);
+            border: none;
+        }
+        
+        .forum-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(244, 37, 175, 0.15), 0 8px 10px -6px rgba(244, 37, 175, 0.1);
+        }
+        
+        .search-input {
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+            padding: 14px 20px 14px 50px;
+        }
+        
+        .dark .search-input {
+            background: #392833;
+            border: none;
+            color: #fff;
+        }
+        
+        .filter-chip {
+            border-radius: 50px;
+            padding: 10px 24px;
+            border: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .filter-chip.active {
+            background: var(--primary);
+            color: #fff;
+        }
+        
+        .filter-chip:not(.active) {
+            background: rgba(0, 0, 0, 0.05);
+            color: #666;
+        }
+        
+        .dark .filter-chip:not(.active) {
+            background: #392833;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .tag-badge {
+            border-radius: 50px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        .floating-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(244, 37, 175, 0.4);
+            z-index: 1000;
+        }
+        
+        @media (min-width: 768px) {
+            .floating-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid px-4 px-md-5">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <div class="text-primary">
+                    <span class="material-symbols-outlined" style="font-size: 32px;">celebration</span>
+                </div>
+                <span class="d-none d-sm-inline fw-bold">Rzeszow Event Planner</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-4">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="all-events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link active fw-bold" href="forum.html" style="color: var(--primary) !important;">Forum</a></li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="index.html" class="btn btn-primary btn-sm" style="background: var(--primary); border-radius: 50px; padding: 8px 20px;">Log out</a>
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcyfOlzt4-jPwbkoXKRfRNYxqkM3XJ62bU4Ode8yFU8uY74AVMKRSmHbKmjYct-hY4w43I-U6CerzCeuDDCFmX7dLjG3ILenb20YbYxbw0zrSIBjDoI5l6Zv4lgqfXT3I0WOH73b940JaLWRGGjGXe6tQD5L4is37DPN8owVNT8MYcAbdRSJvP7Bbvt9Q1HZL0-KejocKn-6MCpFRoTytv-a9zHATGKsNAG6R_7t0rnjM4dZUKasTUEjTbw5nYQxId3Mrl2faN3MM" 
+                         alt="Profile" class="avatar border border-primary border-opacity-20">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="py-5 position-relative">
+        <div class="container px-4 px-md-5 px-lg-5">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold mb-3">Join the conversation in Rzeszow</h1>
+                <p class="lead text-white-50">Find discussions about events, venues, upcoming events, and more.</p>
+            </div>
+            
+            <!-- Search and Action Bar -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-9">
+                    <div class="position-relative">
+                        <span class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-4" style="color: rgba(255,255,255,0.5);">search</span>
+                        <input type="text" class="form-control search-input ps-5" placeholder="Search discussions...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <a href="create-event.html" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 text-decoration-none" style="background: var(--primary); border-radius: 50px; padding: 14px;">
+                        <span class="material-symbols-outlined">add</span>
+                        <span class="d-none d-sm-inline">Start New Topic</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Filter Chips -->
+            <div class="d-flex flex-wrap gap-2 justify-content-center mb-5">
+                <button class="filter-chip active">All Topics</button>
+                <button class="filter-chip">Weekend Plans</button>
+                <button class="filter-chip">Venue Reviews</button>
+                <button class="filter-chip">Looking for Group</button>
+                <button class="filter-chip">Music & DJs</button>
+            </div>
+            
+            <!-- Forum Grid -->
+            <div class="row g-4">
+                <!-- Card 1 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="forum-card">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj-uBfQDdu4ZaeAiqy6HLISpxBFj_bCQ8aB1TirT68ODafCiJAKEnMuka3YWf5FzZawTXnRoCKvXnr7gklgrwhkwQNXr0pORkCii4lsrZypq-37vo7pyyOri3QyKQU6O-zhfOwfejzh_svEFm-gMd68tBYUs2f5Jo2L-07eiC5Vgb-VWLUrOGGCKFIDbAWGt3rpQfjasCXunX8tAaVfFZ31b73g8AZUlieheZxfV-obRZZUBhNNsBlB1R0Iirnvq9PRJ-_uEmufSQ" 
+                             alt="User" class="avatar">
+                            <div>
+                                <p class="fw-bold mb-0 small">Jakub Kowalski</p>
+                                <p class="text-white-50 small mb-0">2 hours ago</p>
+                            </div>
+                            <button class="btn btn-link text-white-50 ms-auto p-2">
+                                <span class="material-symbols-outlined">more_horiz</span>
+                            </button>
+                        </div>
+                        <span class="tag-badge bg-purple-100 text-purple-600 mb-3 d-inline-block">#Nightlife</span>
+                        <h5 class="fw-bold mb-2">Best DJ for a rooftop event?</h5>
+                        <p class="text-white-50 small mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            Hey everyone! I'm planning a small rooftop gathering next weekend near the market square. Looking for recommendations for a DJ who plays deep house and chill vibes.
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div class="d-flex gap-4">
+                                <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">favorite</span>
+                                    <span class="small">12</span>
+                                </button>
+                                <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+                                    <span class="small">4</span>
+                                </button>
+                            </div>
+                            <a href="#" class="text-decoration-none fw-bold" style="color: var(--primary); font-size: 12px;">Read more</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="forum-card">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-Q5cQuQtboWBZo49M6-dghzvXx7z-cXNHU6cittIjdjANaTrikl27BcvytTFFijFFoh4QxldShVd-pxl1jycByGyOfWrKRB673vkI3lsH8IE-L6CjNMBBMBPzQZUbclu_pQNVIIIaSy7Ay_ZgGDJ7_n53O2f3qvskzEFWkD-LJTQya-3AWz6hAX4QmZrKURfWxqb113Nh9-Ga4Ng0LLgMRN-JnjngsGh_NClU3Itk1n544TOtyUl6HAdmIHVOs0y1gMLcn3wG2Sk" 
+                             alt="User" class="avatar">
+                            <div>
+                                <p class="fw-bold mb-0 small">Anna Nowak</p>
+                                <p class="text-muted small mb-0">5 hours ago</p>
+                            </div>
+                            <button class="btn btn-link text-white-50 ms-auto p-2">
+                                <span class="material-symbols-outlined">more_horiz</span>
+                            </button>
+                        </div>
+                        <span class="tag-badge bg-pink-100 text-pink-600 mb-3 d-inline-block">#Social</span>
+                        <h5 class="fw-bold mb-2">Organizing a Pub Quiz at Lord Jack's</h5>
+                        <p class="text-white-50 small mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            Who wants to join my team for the trivia night this Thursday? We need 2 more people, ideally someone who knows 90s pop culture or geography!
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div class="d-flex gap-4">
+                                <button class="btn btn-link p-0 d-flex align-items-center gap-1" style="color: var(--primary);">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">favorite</span>
+                                    <span class="small">45</span>
+                                </button>
+                                <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+                                    <span class="small">20</span>
+                                </button>
+                            </div>
+                            <a href="#" class="text-decoration-none fw-bold" style="color: var(--primary); font-size: 12px;">Read more</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="forum-card">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaDb4hEknA1m9ZHeOZwDj25AKWCifwgRA7kgEoJpK-4IkBwg1s5q0pPdt0oOjo1_7UfKIPcxoMzfYz0mZL2Y4GBpCqiPoHbwgFccVfZTlWollEXW8r2En7IEXpWGELehMuW1SQGlREaLeBW62htqLiefBR7TEqxrk8BNNT5iTWeF2feBA1C9m_FKntb8cvhZoyiGpP4pD3-Cl93KDOHIYofrpVxNoOKuH2VxvF27ONXf60RWEX9maW0irt4WmHwrchU41x_wha4Tc" 
+                             alt="User" class="avatar">
+                            <div>
+                                <p class="fw-bold mb-0 small">Mike Piotrowski</p>
+                                <p class="text-muted small mb-0">1 day ago</p>
+                            </div>
+                            <button class="btn btn-link text-white-50 ms-auto p-2">
+                                <span class="material-symbols-outlined">more_horiz</span>
+                            </button>
+                        </div>
+                        <span class="tag-badge bg-orange-100 text-orange-600 mb-3 d-inline-block">#Food</span>
+                        <h5 class="fw-bold mb-2">Catering recommendations for 50 people</h5>
+                        <p class="text-white-50 small mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            Need good but affordable catering for a birthday bash. Preferably Polish cuisine but open to Italian. Any hidden gems in Rzeszow?
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div class="d-flex gap-4">
+                                <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">favorite</span>
+                                    <span class="small">2</span>
+                                </button>
+                                <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+                                    <span class="small">0</span>
+                                </button>
+                            </div>
+                            <a href="#" class="text-decoration-none fw-bold" style="color: var(--primary); font-size: 12px;">Read more</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 4 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="forum-card">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvc7LMiVKcaDGch-SxJfpA2daA4h8dsr4Pgjwn0vp9ckJvee5TeU2UVmaaJTjqi4TWxv2iniIitzJfj4x3PNz3h-g77APkPM73IF_RhZCCnbAc-QUgiRcoiqElOQ9t2Rmd0ppZWxPLkcXZnI4AXoxBLOs5nC7ekZw18krOlv_lyFEttlL1qAxNy9qIH1JPmAWyxgNcCcPBl7IgGufJBVYEtidP_eFJVEpMW-XymXM-Pli4lnJaVHrU0EaIhYHE5a_vmiK__6EeDdQ" 
+                             alt="User" class="avatar">
+                            <div>
+                                <p class="fw-bold mb-0 small">Kasia W.</p>
+                                <p class="text-muted small mb-0">2 days ago</p>
+                            </div>
+                            <button class="btn btn-link text-white-50 ms-auto p-2">
+                                <span class="material-symbols-outlined">more_horiz</span>
+                            </button>
+                        </div>
+                        <span class="tag-badge bg-blue-100 text-blue-600 mb-3 d-inline-block">#Events</span>
+                        <h5 class="fw-bold mb-2">Cultural Festival Schedule</h5>
+                        <p class="text-white-50 small mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            Does anyone have the full lineup for the upcoming cultural festival at the castle? The website seems to be down.
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div class="d-flex gap-4">
+                                <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">favorite</span>
+                                    <span class="small">89</span>
+                                </button>
+                                <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+                                    <span class="small">15</span>
+                                </button>
+                            </div>
+                            <a href="#" class="text-decoration-none fw-bold" style="color: var(--primary); font-size: 12px;">Read more</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 5 - Featured (Spans 2 columns) -->
+                <div class="col-md-6 col-lg-8">
+                    <div class="forum-card p-0 overflow-hidden">
+                        <div class="position-relative">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCti0bbtQd--7whaLAKs25x354KCxC8AvSocFHrvLSlWDCTCSuBcsQ_OZWqhLpklNn0-JJkQnqL3o4WPZiNkG4EsBFM7Av6b3OsrQ_2C-H-Js92w3Oe4lW837co-DqkUWBYiajmOef16Xbu9gZ1TjFJN78LmnSATwaYotvz6LKmn4R7ax1JETi-vKsKOWyoHVcpHnICUYBlTYxLqad_FAe4DquOVgpeNu9cMuO2Zd15PlObi7ntK6uDHz2Qk-r9l7jV-nMJGScHnQ8" 
+                                 alt="Venue" class="w-100" style="height: 200px; object-fit: cover;">
+                            <div class="position-absolute top-0 start-0 m-3 d-flex gap-2">
+                                <span class="tag-badge bg-white bg-opacity-90 text-dark">#VenueReview</span>
+                                <span class="tag-badge bg-primary text-white">Featured</span>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOijEb6gt_tc8HmdLkTmaTJCXjXEPNdUu1H0uLgXefNXR6qevo4ddLCtbegiHPlhWgDRB43pNlTzk_ehkNOc4tr9dU81-WTXeqMYkz2enJdZdt5coirNFCgP_iEvZ9cCXusNMOxJ3I6-vY7TwLcdSIR1jXYhqdNE9M2vR2cedIkut8004l_3iq-fXRWJwRHlWsPp7pBumDK-ex_r6EzHhaokK1iJPaxxrA7iDk7EcAkMzy2U4CmSUO-MyyF0N_jgQSVwtT6kDL28M" 
+                                     alt="Admin" class="avatar" style="width: 32px; height: 32px;">
+                                <span class="fw-bold small">Admin Team</span>
+                                <span class="text-muted small">• Pinned</span>
+                            </div>
+                            <h5 class="fw-bold mb-2">Review: The New Jazz Club on 3 Maja</h5>
+                            <p class="text-muted small mb-3">
+                                We checked out the newly opened jazz spot last Friday. Incredible atmosphere, great cocktails, but you definitely need a reservation. Full review inside!
+                            </p>
+                            <div class="d-flex gap-4">
+                                <button class="btn btn-link p-0 d-flex align-items-center gap-1" style="color: var(--primary);">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">favorite</span>
+                                    <span class="small">156</span>
+                                </button>
+                                <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+                                    <span class="small">42</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 6 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="forum-card">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWVhjV_BSEXgpc8RuhBE22i-sd9OjL5UE_741bvUPY5i0FmcSGHYH-DStrzI53FYN5mmHItp8_phwsH--Bs4UeHj9bLOEdWhVw-Lty7bnnulWI9IaxSNZDlxAwH7Uu0j3tkY168Hoa_iF0CZHccjqoie9nLVMdsTf--UszEiEdTbHZZ43txJBrPmP0lIhMiwMIuOOXScHHm6Cis4Vxpzg0owtY3zXDNVdFOjq8SY_s9J_o89Y2MhIpa8zJO9s__1OjRX_CecaPDW8" 
+                             alt="User" class="avatar">
+                            <div>
+                                <p class="fw-bold mb-0 small">Marta S.</p>
+                                <p class="text-muted small mb-0">3 days ago</p>
+                            </div>
+                            <button class="btn btn-link text-white-50 ms-auto p-2">
+                                <span class="material-symbols-outlined">more_horiz</span>
+                            </button>
+                        </div>
+                        <span class="tag-badge bg-green-100 text-green-600 mb-3 d-inline-block">#LFG</span>
+                        <h5 class="fw-bold mb-2">Board Game Night Group</h5>
+                        <p class="text-white-50 small mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            Starting a bi-weekly board game group. First meeting at Cybermachina. All skill levels welcome!
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div class="d-flex gap-4">
+                                <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">favorite</span>
+                                    <span class="small">18</span>
+                                </button>
+                                <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+                                    <span class="small">9</span>
+                                </button>
+                            </div>
+                            <a href="#" class="text-decoration-none fw-bold" style="color: var(--primary); font-size: 12px;">Read more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <a href="create-event.html" class="floating-btn d-md-none text-decoration-none">
+        <span class="material-symbols-outlined" style="font-size: 32px;">add</span>
+    </a>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

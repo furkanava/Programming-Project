@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Rzeszow Event Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #f425af;
+            --bg-dark: #22101c;
+            --card-dark: #2f1d28;
+            --input-dark: #392330;
+            --border-dark: #543b4c;
+            --text-secondary: #ba9cb0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: var(--card-dark);
+            border-bottom: 1px solid var(--border-dark);
+            padding: 16px 0;
+        }
+        
+        .navbar-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #9333ea 100%);
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .admin-header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .admin-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+        }
+        
+        .stats-card {
+            background: var(--card-dark);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border-dark);
+            margin-bottom: 24px;
+        }
+        
+        .stats-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .stats-card .label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .events-table-card {
+            background: var(--card-dark);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border-dark);
+        }
+        
+        .table {
+            color: white;
+        }
+        
+        .table thead th {
+            border-bottom: 2px solid var(--border-dark);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        .table tbody td {
+            border-bottom: 1px solid var(--border-dark);
+            vertical-align: middle;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(244, 37, 175, 0.05);
+        }
+        
+        .event-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            margin-right: 8px;
+        }
+        
+        .btn-edit:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+        
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-logout {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #d41d9a;
+        }
+        
+        .no-events {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 8px;">admin_panel_settings</span>
+                Admin Panel
+            </a>
+            <div class="ms-auto">
+                <button class="btn btn-logout" onclick="logout()">
+                    <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px; font-size: 18px;">logout</span>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="container">
+            <h1>Event Management</h1>
+            <p>Manage all events in the system</p>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Stats -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="number" id="totalEvents">0</div>
+                    <div class="label">Total Events</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="number" id="publicEvents">0</div>
+                    <div class="label">Public Events</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="number" id="privateEvents">0</div>
+                    <div class="label">Private Events</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Events Table -->
+        <div class="events-table-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 fw-bold mb-0">All Events</h2>
+                <button class="btn btn-primary" onclick="loadAllEvents()" style="background: var(--primary); border: none;">
+                    <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">refresh</span>
+                    Refresh
+                </button>
+            </div>
+            
+            <div id="eventsContainer">
+                <div class="loading">
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Loading events...
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Events JS -->
+    <script src="events.js"></script>
+    
+    <script>
+        // Check admin session
+        const adminSession = sessionStorage.getItem('adminLoggedIn');
+        if (adminSession !== 'true') {
+            window.location.href = 'admin-login.html';
+        }
+        
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                window.location.href = 'admin-login.html';
+            }
+        }
+        
+        // Load all events
+        async function loadAllEvents() {
+            const container = document.getElementById('eventsContainer');
+            if (!container) {
+                console.error('Events container not found');
+                return;
+            }
+            
+            container.innerHTML = '<div class="loading"><span class="spinner-border spinner-border-sm me-2"></span>Loading events...</div>';
+            
+            // Check if Firebase is ready
+            if (!window.firebaseDb) {
+                container.innerHTML = '<div class="no-events"><p style="color: #f87171;">Firebase not initialized. Please refresh the page.</p></div>';
+                console.error('Firebase database not initialized');
+                return;
+            }
+            
+            try {
+                console.log('Loading events from Firestore...');
+                console.log('firebaseDb object:', window.firebaseDb);
+                console.log('firebaseDb.collection:', typeof window.firebaseDb?.collection);
+                
+                // Get all events from Firestore - try without orderBy first to avoid index issues
+                let eventsSnapshot;
+                try {
+                    // First try without orderBy (most reliable)
+                    console.log('Calling collection("events").get()...');
+                    eventsSnapshot = await window.firebaseDb.collection('events').get();
+                    console.log('Events loaded successfully, count:', eventsSnapshot.size);
+                    console.log('Events snapshot:', eventsSnapshot);
+                } catch (getError) {
+                    console.error('Error getting events:', getError);
+                    console.error('Error details:', {
+                        message: getError.message,
+                        code: getError.code,
+                        stack: getError.stack
+                    });
+                    container.innerHTML = `<div class="no-events"><p style="color: #f87171;">Error loading events: ${getError.message}</p><p class="text-white-50 small mt-2">Check browser console for details.</p></div>`;
+                    return;
+                }
+                
+                const events = [];
+                eventsSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    events.push({
+                        id: doc.id,
+                        ...data
+                    });
+                });
+                
+                console.log('Events array:', events);
+                console.log('Total events found:', events.length);
+                
+                // Sort events by createdAt if available (client-side)
+                events.sort((a, b) => {
+                    const aDate = a.createdAt ? (a.createdAt.toDate ? a.createdAt.toDate().getTime() : (a.createdAt.seconds * 1000)) : 0;
+                    const bDate = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate().getTime() : (b.createdAt.seconds * 1000)) : 0;
+                    return bDate - aDate; // Descending order
+                });
+                
+                // Update stats
+                const totalEventsEl = document.getElementById('totalEvents');
+                const publicEventsEl = document.getElementById('publicEvents');
+                const privateEventsEl = document.getElementById('privateEvents');
+                
+                if (totalEventsEl) totalEventsEl.textContent = events.length;
+                if (publicEventsEl) publicEventsEl.textContent = events.filter(e => e.isPublic !== false).length;
+                if (privateEventsEl) privateEventsEl.textContent = events.filter(e => e.isPublic === false).length;
+                
+                if (events.length === 0) {
+                    container.innerHTML = '<div class="no-events"><span class="material-symbols-outlined" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">event_busy</span><p>No events found</p></div>';
+                    return;
+                }
+                
+                // Display events in table
+                let tableHTML = `
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Host</th>
+                                    <th>Date</th>
+                                    <th>Location</th>
+                                    <th>Type</th>
+                                    <th>Attendees</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                for (const event of events) {
+                    const eventDate = event.date ? (event.date.toDate ? event.date.toDate() : new Date(event.date.seconds * 1000)) : null;
+                    const dateStr = eventDate ? eventDate.toLocaleDateString() : 'TBD';
+                    
+                    const imageUrl = event.imageBase64 || event.imageURL || 'https://via.placeholder.com/60x60/392833/ffffff?text=No+Image';
+                    
+                    tableHTML += `
+                        <tr>
+                            <td>
+                                <img src="${imageUrl}" alt="${event.title || 'Event'}" class="event-image" onerror="this.src='https://via.placeholder.com/60x60/392833/ffffff?text=No+Image'">
+                            </td>
+                            <td><strong>${event.title || 'Untitled Event'}</strong></td>
+                            <td>${event.createdByName || event.hostName || event.hostId || 'Unknown'}</td>
+                            <td>${dateStr}</td>
+                            <td>${event.location || 'N/A'}</td>
+                            <td>
+                                <span class="badge ${event.isPublic !== false ? 'bg-success' : 'bg-secondary'}">
+                                    ${event.isPublic !== false ? 'Public' : 'Private'}
+                                </span>
+                            </td>
+                            <td>${event.attendeeCount || 0}</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editEvent('${event.id}')">
+                                    <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">edit</span>
+                                    Edit
+                                </button>
+                                <button class="btn-action btn-delete" onclick="deleteEvent('${event.id}', '${(event.title || 'this event').replace(/'/g, "\\'")}')">
+                                    <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">delete</span>
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                tableHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                container.innerHTML = tableHTML;
+                console.log('Events table rendered successfully');
+            } catch (error) {
+                console.error('Error loading events:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    code: error.code,
+                    stack: error.stack
+                });
+                container.innerHTML = `<div class="no-events"><p style="color: #f87171;">Error loading events: ${error.message}</p><p class="text-white-50 small mt-2">Please check the browser console (F12) for more details.</p><button class="btn btn-primary mt-3" onclick="loadAllEvents()" style="background: var(--primary);">Retry</button></div>`;
+            }
+        }
+        
+        // Edit event
+        function editEvent(eventId) {
+            window.location.href = `edit-event.html?id=${eventId}`;
+        }
+        
+        // Delete event
+        async function deleteEvent(eventId, eventTitle) {
+            if (!confirm(`Are you sure you want to delete "${eventTitle}"?\n\nThis action cannot be undone!`)) {
+                return;
+            }
+            
+            try {
+                const eventRef = window.firebaseDb.collection('events').doc(eventId);
+                
+                // Delete all subcollections first (rsvps, comments)
+                const rsvpsSnapshot = await eventRef.collection('rsvps').get();
+                const deleteRsvps = rsvpsSnapshot.docs.map(doc => doc.ref.delete());
+                await Promise.all(deleteRsvps);
+                
+                const commentsSnapshot = await eventRef.collection('comments').get();
+                const deleteComments = commentsSnapshot.docs.map(doc => doc.ref.delete());
+                await Promise.all(deleteComments);
+                
+                // Finally delete the event document
+                await eventRef.delete();
+                
+                alert('Event deleted successfully!');
+                loadAllEvents(); // Reload events
+            } catch (error) {
+                console.error('Error deleting event:', error);
+                alert('Error deleting event: ' + error.message);
+            }
+        }
+        
+        // Wait for Firebase to initialize
+        function waitForFirebaseAndLoad() {
+            console.log('Checking Firebase initialization...');
+            console.log('firebaseDb:', window.firebaseDb);
+            console.log('firebaseAuth:', window.firebaseAuth);
+            
+            if (window.firebaseDb) {
+                console.log('Firebase ready, loading events...');
+                loadAllEvents();
+            } else {
+                console.log('Firebase not ready, waiting...');
+                setTimeout(waitForFirebaseAndLoad, 500);
+            }
+        }
+        
+        // Start loading events when page is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                waitForFirebaseAndLoad();
+            });
+        } else {
+            waitForFirebaseAndLoad();
+        }
+    </script>
+</body>
+</html>
+

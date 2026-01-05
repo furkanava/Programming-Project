@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rzeszow Event Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f425af;
+            --background-light: #f8f5f7;
+            --background-dark: #22101c;
+            --surface-dark: #311c29;
+            --surface-light: #ffffff;
+        }
+        
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            background-color: var(--background-dark);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar {
+            background-color: rgba(34, 16, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            color: var(--primary) !important;
+            font-weight: 700;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary) !important;
+        }
+        
+        .btn-primary-custom {
+            background-color: var(--primary);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(244, 37, 175, 0.4);
+            transition: all 0.3s;
+        }
+        
+        .btn-primary-custom:hover {
+            background-color: var(--primary);
+            box-shadow: 0 0 25px rgba(244, 37, 175, 0.6);
+            transform: scale(1.05);
+        }
+        
+        .btn-outline-custom {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 10px 24px;
+            color: #fff;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .btn-outline-custom:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        
+        .hero-section {
+            min-height: 600px;
+            background: linear-gradient(rgba(34, 16, 28, 0.4), rgba(34, 16, 28, 0.8)), 
+                        url('https://lh3.googleusercontent.com/aida-public/AB6AXuD-fTmDo3GbiHCBs87nTuVSJKjqkJ5Gc53WflGvph00Kl8S0NUp11q0-Bare3zdFTxLtuiXosiesRtjpmgJDyDxYynOD0PSGY3_FqDxOABDc1Y704Qs_Ihy_RhjiyGHd9hA7IJjES8o9tcflfhYb6xr-XF0WrVQxvhTvKXsq5j1KGG9wt4WlNPdbG4PRcsNkAItto3pTOzs-kXw0E8EfR8AWXDrdbKc7b6V4f77pSrk921nFZ2gvriCXcC_mXEmWx3EPMgGvCbKJQc');
+            background-size: cover;
+            background-position: center;
+            border-radius: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(34, 16, 28, 0.9), rgba(34, 16, 28, 0.4), transparent);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1.1;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #fff, #fbcfe8, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .feature-card {
+            background: var(--surface-dark);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            padding: 2rem;
+            transition: all 0.3s;
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            border-color: rgba(244, 37, 175, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(244, 37, 175, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 24px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .event-card {
+            background: var(--surface-dark);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s;
+            min-width: 280px;
+        }
+        
+        .event-card:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px);
+        }
+        
+        .event-image {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+        }
+        
+        .event-date-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(34, 16, 28, 0.8);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer {
+            background: var(--background-dark);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3rem 0;
+            margin-top: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <span class="material-symbols-outlined" style="font-size: 32px;">celebration</span>
+                <span class="d-none d-sm-inline">Rzeszow Event Planner</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-4">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="all-events.html">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="forum-access.html">Forum</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link auth-link-profile" href="profile.html" style="display: none;">Profile</a>
+                    </li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <a href="signin.html" class="btn btn-outline-light d-none d-sm-inline-block" style="border-radius: 50px; padding: 10px 24px;">Login</a>
+                    <a href="register.html" class="btn btn-primary-custom">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="flex-grow">
+        <section class="container my-5" style="margin-top: 100px !important;">
+            <div class="hero-section">
+                <div class="hero-overlay"></div>
+                <div class="hero-content px-4">
+                    <div class="live-badge">
+                        <span class="live-dot"></span>
+                        Live in Rzeszow
+                    </div>
+                    <h1 class="hero-title">
+                        Plan. Event.<br>
+                        <span class="gradient-text">Connect in Rzeszow.</span>
+                    </h1>
+                    <p class="lead text-white-50 mb-4" style="max-width: 600px; margin: 0 auto;">
+                        The easiest way to organize gatherings, track RSVPs, and discover the hottest events happening in your city tonight.
+                    </p>
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mt-4">
+                        <a href="register.html" class="btn btn-primary-custom btn-lg">Start Planning</a>
+                        <a href="all-events.html" class="btn btn-outline-custom btn-lg">Browse Events</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="container my-5 py-5" id="features">
+            <div class="row mb-5">
+                <div class="col-lg-8">
+                    <h2 class="display-4 fw-bold mb-3">Why Rzeszow Event Planner?</h2>
+                    <p class="lead text-white-50">
+                        All the tools you need to make your social life vibrant, organized, and unforgettable.
+                    </p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="material-symbols-outlined">calendar_month</span>
+                        </div>
+                        <h4 class="fw-bold mb-3">Smart Scheduling</h4>
+                        <p class="text-white-50">
+                            Coordinate with friends easily. Propose dates, vote on the best times, and sync everything to your personal calendar.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="material-symbols-outlined">groups</span>
+                        </div>
+                        <h4 class="fw-bold mb-3">Guest Management</h4>
+                        <p class="text-white-50">
+                            Keep track of who's coming, who's bringing what, and manage your guest list in real-time with instant notifications.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="material-symbols-outlined">map</span>
+                        </div>
+                        <h4 class="fw-bold mb-3">Local Discoveries</h4>
+                        <p class="text-white-50">
+                            Explore a curated map of the hottest venues in Rzeszow. From underground clubs to scenic rooftop bars.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section class="container my-5 py-5" id="events">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="display-5 fw-bold">Upcoming Public Events</h2>
+                <a href="all-events.html" class="text-decoration-none d-none d-sm-block" style="color: var(--primary);">
+                    View all <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">arrow_forward</span>
+                </a>
+            </div>
+            <div class="row g-4 overflow-auto flex-nowrap" id="upcomingEventsContainer" style="overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
+                <!-- Events will be loaded dynamically here -->
+                <div class="col-12 text-center py-5" id="noUpcomingEvents" style="display: none;">
+                    <p class="text-white-50 mb-3">No upcoming public events found.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined" style="color: var(--primary); font-size: 24px;">celebration</span>
+                        <span class="fw-bold fs-5">Rzeszow Event Planner</span>
+                    </div>
+                    <p class="text-white-50 small mb-0">© 2023 Rzeszow Event Planner. All rights reserved.</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex flex-wrap gap-4 justify-content-md-end mb-3">
+                        <a href="#" class="text-white-50 text-decoration-none">About</a>
+                        <a href="#" class="text-white-50 text-decoration-none">Privacy</a>
+                        <a href="#" class="text-white-50 text-decoration-none">Terms</a>
+                        <a href="#" class="text-white-50 text-decoration-none">Contact</a>
+                    </div>
+                    <div class="d-flex gap-3 justify-content-md-end">
+                        <a href="#" class="btn btn-outline-secondary rounded-circle" style="width: 40px; height: 40px; padding: 0;">
+                            <span class="material-symbols-outlined">alternate_email</span>
+                        </a>
+                        <a href="#" class="btn btn-outline-secondary rounded-circle" style="width: 40px; height: 40px; padding: 0;">
+                            <span class="material-symbols-outlined">share</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Firebase Functions -->
+    <script src="auth.js"></script>
+    <script src="events.js"></script>
+    
+    <script>
+        // Wait for Firebase to load
+        function waitForFirebase(callback) {
+            if (window.firebaseAuth && window.firebaseDb && window.getPublicEvents) {
+                callback();
+            } else {
+                setTimeout(() => waitForFirebase(callback), 100);
+            }
+        }
+        
+        // Load upcoming public events
+        async function loadUpcomingEvents() {
+            waitForFirebase(async () => {
+                const result = await window.getPublicEvents(4); // Limit to 4 events
+                const container = document.getElementById('upcomingEventsContainer');
+                const noEvents = document.getElementById('noUpcomingEvents');
+                
+                if (!container) return;
+                
+                if (result.success && result.events.length > 0) {
+                    if (noEvents) noEvents.style.display = 'none';
+                    container.innerHTML = '';
+                    
+                    result.events.forEach(event => {
+                        const col = document.createElement('div');
+                        col.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
+                        
+                        let dateStr = 'TBD';
+                        if (event.date) {
+                            if (event.date.toDate) {
+                                const date = event.date.toDate();
+                                dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            } else if (event.date.seconds) {
+                                const date = new Date(event.date.seconds * 1000);
+                                dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            } else if (event.dateString) {
+                                const date = new Date(event.dateString);
+                                dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            }
+                        }
+                        
+                        let imageUrl = event.imageURL || event.imageBase64;
+                        if (!imageUrl) {
+                            imageUrl = `https://via.placeholder.com/400x200/392833/ffffff?text=${encodeURIComponent(event.title)}`;
+                        } else if (!imageUrl.startsWith('data:image') && !imageUrl.startsWith('http')) {
+                            imageUrl = `https://via.placeholder.com/400x200/392833/ffffff?text=${encodeURIComponent(event.title)}`;
+                        }
+                        
+                        col.innerHTML = `
+                            <div class="event-card">
+                                <div class="position-relative">
+                                    <img src="${imageUrl}" alt="${event.title}" class="event-image" onerror="this.src='https://via.placeholder.com/400x200/392833/ffffff?text=${encodeURIComponent(event.title)}'">
+                                    <span class="event-date-badge">${dateStr}</span>
+                                </div>
+                                <div class="p-4">
+                                    <h5 class="fw-bold mb-2">${event.title}</h5>
+                                    <p class="text-white-50 small mb-3">
+                                        <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">location_on</span>
+                                        ${event.location || 'TBD'}
+                                    </p>
+                                    <div class="d-flex gap-2">
+                                        <span class="badge bg-secondary">${event.category || 'Event'}</span>
+                                        ${event.price > 0 ? `<span class="badge bg-success">${event.price} PLN</span>` : '<span class="badge bg-success">Free</span>'}
+                                    </div>
+                                    <a href="event-detail.html?id=${event.id}" class="btn btn-primary btn-sm w-100 mt-3" style="background: var(--primary); border-radius: 50px;">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        
+                        container.appendChild(col);
+                    });
+                } else {
+                    if (noEvents) noEvents.style.display = 'block';
+                    container.innerHTML = '';
+                }
+            });
+        }
+        
+        // Redirect to dashboard if already logged in
+        if (window.firebaseAuth) {
+            window.firebaseAuth.onAuthStateChanged((user) => {
+                if (user) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Load events only if not logged in
+                    loadUpcomingEvents();
+                }
+            });
+        } else {
+            // Load events if Firebase not initialized yet
+            loadUpcomingEvents();
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Rzeszow Event Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f425af;
+            --background-dark: #22101c;
+            --surface-dark: #2d1b27;
+            --surface-input: #271b23;
+            --border-color: #543b4c;
+        }
+        
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            background-color: var(--background-dark);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar {
+            background: rgba(34, 16, 28, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .navbar-brand {
+            color: #fff !important;
+        }
+        
+        .glass {
+            background: rgba(45, 27, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .glass .position-relative {
+            z-index: 20 !important;
+        }
+        
+        .form-control {
+            background: var(--surface-input);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            color: #fff;
+            padding: 12px 20px;
+        }
+        
+        .form-control:focus {
+            background: var(--surface-input);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 0 0.2rem rgba(244, 37, 175, 0.25);
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .btn-primary-custom {
+            background: var(--primary);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(244, 37, 175, 0.2);
+        }
+        
+        .btn-primary-custom:hover {
+            background: rgba(244, 37, 175, 0.9);
+        }
+        
+        .btn-social {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 12px 24px;
+            color: #fff;
+        }
+        
+        .btn-social:hover {
+            background: rgba(84, 59, 76, 0.5);
+            color: #fff;
+        }
+        
+        .ambient-glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .glow-1 {
+            background: rgba(244, 37, 175, 0.1);
+            top: 25%;
+            left: -80px;
+        }
+        
+        .glow-2 {
+            background: rgba(59, 130, 246, 0.1);
+            bottom: 25%;
+            right: -80px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <div class="bg-primary bg-opacity-20 rounded-circle p-2">
+                    <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">celebration</span>
+                </div>
+                <span class="fw-bold">Rzeszow Event Planner</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-4">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="all-events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="forum-access.html">Forum</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="signin.html" style="color: #fff !important; position: relative;">Login/Register</a></li>
+                </ul>
+                <a href="index.html" class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" style="border-radius: 50px;">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
+                    <span class="d-none d-md-inline">Back</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow d-flex align-items-center justify-content-center py-5 position-relative" style="min-height: calc(100vh - 76px);">
+        <div class="ambient-glow glow-1"></div>
+        <div class="ambient-glow glow-2"></div>
+        
+        <div class="container position-relative" style="z-index: 10;">
+            <div class="row align-items-center">
+                <!-- Left Column: Login Form -->
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="px-4">
+                        <h1 class="display-4 fw-bold mb-2">Welcome back to the event!</h1>
+                        <p class="lead text-white-50 mb-4">Manage your Rzeszow events in one place.</p>
+                        
+                        <form id="signinForm">
+                            <div class="mb-4">
+                                <label for="email" class="form-label small fw-medium mb-2 ms-2">Email Address</label>
+                                <div class="position-relative">
+                                    <input type="email" class="form-control ps-5" id="email" placeholder="name@example.com" required>
+                                    <span class="material-symbols-outlined input-icon">mail</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2 ms-2">
+                                    <label for="password" class="form-label small fw-medium mb-0">Password</label>
+                                    <a href="#" class="text-decoration-none small" style="color: var(--primary);">Forgot Password?</a>
+                                </div>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control ps-5" id="password" placeholder="Enter your password" required>
+                                    <span class="material-symbols-outlined input-icon" style="cursor: pointer;" id="togglePassword">visibility</span>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary-custom w-100 mb-3 d-flex align-items-center justify-content-center gap-2" id="signinBtn">
+                                <span>Sign In</span>
+                                <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+                            </button>
+                            
+                            <div class="d-flex align-items-center my-4">
+                                <hr class="flex-grow-1" style="border-color: var(--border-color);">
+                                <span class="px-3 text-white-50 small">Or continue with</span>
+                                <hr class="flex-grow-1" style="border-color: var(--border-color);">
+                            </div>
+                            
+                            <button type="button" id="googleSignInBtnMain" class="btn btn-social w-100 d-flex align-items-center justify-content-center gap-3">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M23.5 12.2C23.5 11.4 23.4 10.6 23.2 9.9H12V14.3H18.5C18.2 15.9 17.3 17.2 16 18.1L19.8 21.1C22 19 23.5 15.9 23.5 12.2Z" fill="#4285F4"/>
+                                    <path d="M12 24C15.2 24 17.9 22.9 19.8 21.1L16 18.1C15 18.9 13.6 19.3 12 19.3C8.9 19.3 6.3 17.2 5.3 14.3L1.5 17.3C3.5 21.3 7.5 24 12 24Z" fill="#34A853"/>
+                                    <path d="M5.3 14.3C5 13.4 4.9 12.5 4.9 11.5C4.9 10.6 5 9.7 5.3 8.8L1.5 5.8C0.5 7.6 0 9.5 0 11.5C0 13.6 0.5 15.5 1.5 17.3L5.3 14.3Z" fill="#FBBC05"/>
+                                    <path d="M12 3.7C13.7 3.7 15.3 4.3 16.5 5.5L19.9 2.1C17.9 0.2 15.2 -0.3 12 0.5C7.5 0.5 3.5 3.2 1.5 7.2L5.3 10.2C6.3 7.3 8.9 5.2 12 3.7Z" fill="#EA4335"/>
+                                </svg>
+                                Login with Google
+                            </button>
+                            
+                            <p class="text-center text-white-50 mt-3 mb-0">
+                                Don't have an account? 
+                                <a href="register.html" class="text-decoration-none fw-bold" style="color: var(--primary);">Register</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Right Column: My Events Widget -->
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="glass rounded-4 p-4 position-relative overflow-hidden">
+                        <div class="position-absolute inset-0">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvYTW0K3Cw4irqsyhmvAQXNnotKoE_SfQXmvdmCR96_TmA0vbOdP2v2vyTS8v1DSmYPcE3vMiXgua1dbtmOXt8qZoNXxplWzNICHLX9Aryt8lHTi_Ma0MpxtQ4f8h7YiaBYVfBYfEHYmye7R0dNCy8mUVqtMsb9gMrJ-JGM57tqFO_BVQPmW1XVXLeP8TINITfAulhy2BKnJCdwMHOvhsbU70YdKeM5sdrBjQNpBbS1vorz7l_DmGodFBkq_pLPGfIOD9dOdyZKBs" 
+                                 alt="Background" class="w-100 h-100 object-fit-cover opacity-40">
+                            <div class="position-absolute inset-0 bg-gradient-to-top from-background-dark via-background-dark/80 to-transparent"></div>
+                        </div>
+                        <div class="position-relative" style="z-index: 10;">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h3 class="h4 fw-bold d-flex align-items-center gap-2">
+                                    <span class="material-symbols-outlined" style="color: var(--primary);">event_note</span>
+                                    My Events
+                                </h3>
+                                <span class="badge bg-white bg-opacity-10 text-white">Upcoming</span>
+                            </div>
+                            <div class="d-flex flex-column gap-3">
+                                <div class="glass p-3 rounded-3 border border-white border-opacity-5">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="badge bg-primary text-white" style="font-size: 10px;">Today</span>
+                                        <span class="material-symbols-outlined text-white-50" style="font-size: 18px;">more_horiz</span>
+                                    </div>
+                                    <h5 class="fw-bold mb-1">Rzeszow Market Square Meetup</h5>
+                                    <div class="d-flex align-items-center gap-1 text-white-50 small mb-2">
+                                        <span class="material-symbols-outlined" style="font-size: 14px; color: var(--primary);">location_on</span>
+                                        Rynek Główny, Rzeszow
+                                    </div>
+                                    <div class="d-flex gap-4 text-white-50 small">
+                                        <span class="d-flex align-items-center gap-1">
+                                            <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
+                                            18:00
+                                        </span>
+                                        <span class="d-flex align-items-center gap-1">
+                                            <span class="material-symbols-outlined" style="font-size: 14px;">group</span>
+                                            12 Going
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="glass p-3 rounded-3 border border-white border-opacity-5">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="badge text-white" style="background: #9333ea; font-size: 10px;">In Jan</span>
+                                        <span class="material-symbols-outlined text-white-50" style="font-size: 18px;">more_horiz</span>
+                                    </div>
+                                    <h5 class="fw-bold mb-1">Techno Night @ Club XYZ</h5>
+                                    <div class="d-flex align-items-center gap-1 text-white-50 small mb-2">
+                                        <span class="material-symbols-outlined" style="font-size: 14px; color: var(--primary);">location_on</span>
+                                        Club XYZ, Rzeszow
+                                    </div>
+                                    <div class="d-flex gap-4 text-white-50 small">
+                                        <span class="d-flex align-items-center gap-1">
+                                            <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
+                                            22:00
+                                        </span>
+                                        <span class="d-flex align-items-center gap-1">
+                                            <span class="material-symbols-outlined" style="font-size: 14px;">confirmation_number</span>
+                                            Tickets Ready
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4 pt-3 border-top border-white border-opacity-10">
+                                <a href="all-events.html" class="text-decoration-none small text-white d-inline-flex align-items-center gap-1 fw-medium" style="color: rgba(255, 255, 255, 0.9) !important;">
+                                    View all events
+                                    <span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Firebase Functions -->
+    <script src="auth.js"></script>
+    
+    <script>
+        // Sign in form handler
+        document.getElementById('signinForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const signinBtn = document.getElementById('signinBtn');
+            const originalText = signinBtn.innerHTML;
+            
+            // Disable button and show loading
+            signinBtn.disabled = true;
+            signinBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
+            
+            const result = await window.signIn(email, password);
+            
+            if (result && result.success) {
+                const user = result.user;
+                
+                // Check email verification
+                if (user && !user.emailVerified) {
+                    // Reload user to get latest verification status
+                    await user.reload();
+                    
+                    if (!user.emailVerified) {
+                        alert('Your email is not verified. Please verify your email before logging in.');
+                        sessionStorage.setItem('pendingVerificationEmail', user.email);
+                        window.location.href = 'email-verification.html?email=' + encodeURIComponent(user.email);
+                        signinBtn.disabled = false;
+                        signinBtn.innerHTML = originalText;
+                        return;
+                    }
+                }
+                
+                alert('Login successful! Redirecting to dashboard...');
+                window.location.href = 'dashboard.html';
+            } else {
+                const errorMsg = result ? result.error : 'Unknown error occurred';
+                alert('Login failed: ' + errorMsg);
+                signinBtn.disabled = false;
+                signinBtn.innerHTML = originalText;
+            }
+        });
+        
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = 'visibility_off';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = 'visibility';
+            }
+        });
+        
+        // Google Sign In button handler function
+        async function handleGoogleSignIn(btn) {
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
+            
+            try {
+                const result = await window.signInWithGoogle();
+                
+                if (result && result.success) {
+                    alert('Login successful! Redirecting to dashboard...');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    const errorMsg = result ? result.error : 'Unknown error occurred';
+                    if (errorMsg !== 'Sign in was cancelled.') {
+                        alert('Google sign in failed: ' + errorMsg);
+                    }
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
+                }
+            } catch (error) {
+                console.error('Google sign in error:', error);
+                alert('An error occurred: ' + (error.message || error));
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
+        
+        // Google Sign In buttons (main and small)
+        const googleSignInBtnMain = document.getElementById('googleSignInBtnMain');
+        const googleSignInBtn = document.getElementById('googleSignInBtn');
+        
+        if (googleSignInBtnMain) {
+            googleSignInBtnMain.addEventListener('click', function() {
+                handleGoogleSignIn(this);
+            });
+        }
+        
+        if (googleSignInBtn) {
+            googleSignInBtn.addEventListener('click', function() {
+                handleGoogleSignIn(this);
+            });
+        }
+        
+        // Check if user is already logged in
+        if (window.firebaseAuth) {
+            window.firebaseAuth.onAuthStateChanged((user) => {
+                if (user) {
+                    window.location.href = 'dashboard.html';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

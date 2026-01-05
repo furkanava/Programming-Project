@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Detail - Rzeszow Event Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f425af;
+            --background-dark: #22101c;
+            --card-dark: #2f1b29;
+        }
+        
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            background-color: var(--background-dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: rgba(34, 16, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .hero-image {
+            height: 400px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(34, 16, 28, 0.8), transparent);
+        }
+        
+        .sidebar-card {
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .dark .sidebar-card {
+            background: var(--card-dark);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .comment-card {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 1.5rem;
+            padding: 12px;
+            border-top-left-radius: 4px;
+        }
+        
+        .dark .comment-card {
+            background: var(--card-dark);
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .gallery-item {
+            aspect-ratio: 1;
+            border-radius: 0.5rem;
+            object-fit: cover;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        
+        .gallery-item:hover {
+            opacity: 0.8;
+        }
+        
+        .map-preview {
+            height: 128px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 0.5rem;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            transition: background 0.3s;
+        }
+        
+        .map-overlay:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body class="dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid px-4 px-md-5">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <div class="text-primary">
+                    <span class="material-symbols-outlined" style="font-size: 32px;">celebration</span>
+                </div>
+                <span class="d-none d-sm-inline fw-bold">Rzeszow Event Planner</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-4">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="all-events.html" style="color: var(--primary) !important;">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="forum.html">Forum</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-link text-white p-0">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_GPjLX2DSHALSfDnahNIjiaCZ74BY7UGn7FXtbUHUWo6YbBEJDcNku3ye6nYfOs9Drjtce97W5FNr5yv7QClfqFjI5rva9qa7f5nrUrDEm-2dft4_IGvjt7SASd3GkZMzVynFpU52QwRp-gG_Puw0PctQQzuyqirlIBd1HkGmGa1tj2V6wrbA_fgeFKLurUFqWN4Q0xPqDeBimA-3mqTsmRwAwvyzz7989_t6yGUocGWlYG9UIOrO4DCnVpx_ElOYNrb7db9xB78" 
+                         alt="Profile" class="avatar border border-primary">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid px-4 px-md-5 py-4">
+        <div class="row g-4">
+            <!-- Left Column -->
+            <div class="col-lg-8">
+                <!-- Hero Image -->
+                <div class="hero-image mb-4" id="heroImage">
+                    <div class="hero-overlay"></div>
+                    <div class="position-absolute top-0 start-0 m-3" id="featuredBadge" style="display: none;">
+                        <span class="badge bg-primary bg-opacity-90 px-3 py-1">Featured Event</span>
+                    </div>
+                </div>
+                
+                <!-- Title & Host -->
+                <div class="mb-4">
+                    <h1 class="display-4 fw-black mb-2" id="eventTitle">Loading...</h1>
+                    <div class="d-flex align-items-center gap-2 flex-wrap" id="hostInfo">
+                        <div class="avatar rounded-circle bg-primary bg-opacity-20 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <span class="material-symbols-outlined" style="color: var(--primary);">person</span>
+                        </div>
+                        <p class="text-white-50 mb-0">Loading host information...</p>
+                    </div>
+                </div>
+                
+                <!-- Description -->
+                <div class="mb-4">
+                    <h3 class="h4 fw-bold mb-3">About the event</h3>
+                    <div id="eventDescription" class="text-white" style="opacity: 0.9;">
+                        <p>Loading event description...</p>
+                    </div>
+                </div>
+                
+                <!-- Gallery - Removed dummy images, will be populated if event has multiple images -->
+                <div class="mb-4" id="gallerySection" style="display: none;">
+                    <h3 class="h4 fw-bold mb-3">Vibe Check</h3>
+                    <div class="row g-3" id="galleryContainer">
+                        <!-- Gallery images will be loaded here if available -->
+                    </div>
+                </div>
+                
+                <!-- Discussion -->
+                <div class="pt-4 border-top border-white border-opacity-10">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="h4 fw-bold">Discussion</h3>
+                        <span class="badge bg-white bg-opacity-10" id="commentCount">0 Comments</span>
+                    </div>
+                    
+                    <!-- Comment Input -->
+                    <form id="commentForm" class="d-flex gap-3 mb-4">
+                        <div class="avatar rounded-circle bg-primary bg-opacity-20 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                            <span class="material-symbols-outlined" style="color: var(--primary);">person</span>
+                        </div>
+                        <div class="flex-grow-1 position-relative">
+                            <input type="text" id="commentInput" class="form-control rounded-pill ps-4 pe-5" placeholder="Ask a question or join the hype..." style="background: var(--card-dark); border: none; color: #fff;" required>
+                            <button type="submit" class="btn btn-primary position-absolute end-0 top-50 translate-middle-y rounded-circle me-2" style="width: 36px; height: 36px; padding: 0;">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">send</span>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Comments -->
+                    <div class="comments-list d-flex flex-column gap-4" id="commentsList">
+                        <p class="text-white-50 text-center py-4">Loading comments...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Sidebar -->
+            <div class="col-lg-4">
+                <div class="sticky-top" style="top: 80px;">
+                    <!-- Action Card -->
+                    <div class="sidebar-card mb-4">
+                        <div class="d-flex justify-content-between mb-4">
+                            <div>
+                                <p class="text-uppercase small fw-medium text-white-50 mb-1">Date & Time</p>
+                                <p class="fw-bold mb-1 d-flex align-items-center gap-2" id="eventDateDisplay">
+                                    <span class="material-symbols-outlined" style="color: var(--primary);">calendar_month</span>
+                                    <span>Loading...</span>
+                                </p>
+                                <p class="small text-white-50 ps-5" id="eventTimeDisplay">Loading...</p>
+                            </div>
+                            <div class="text-end">
+                                <p class="text-uppercase small fw-medium text-white-50 mb-1">Price</p>
+                                <p class="fw-bold text-success" id="eventPriceDisplay">Loading...</p>
+                            </div>
+                        </div>
+                        <hr class="border-white border-opacity-10">
+                        <div class="mb-4">
+                            <p class="text-uppercase small fw-medium text-white-50 mb-2">Location</p>
+                            <p class="fw-bold small d-flex align-items-start gap-2" id="eventLocationDisplay">
+                                <span class="material-symbols-outlined" style="color: var(--primary);">location_on</span>
+                                <span>Loading...</span>
+                            </p>
+                            <div class="map-preview mt-2" id="mapPreview" style="background-image: url('https://via.placeholder.com/400x200/392833/ffffff?text=Map'); cursor: pointer;" onclick="openMap()">
+                                <div class="map-overlay">
+                                    <span class="badge bg-white text-dark px-3 py-1">Open Map</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column gap-2" id="rsvpSection">
+                            <button id="rsvpBtn" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2" style="background: var(--primary); border-radius: 50px; padding: 14px;">
+                                <span class="material-symbols-outlined">confirmation_number</span>
+                                Get Ticket
+                            </button>
+                            <div id="ticketSection" style="display: none;">
+                                <div class="alert alert-success mb-3" role="alert">
+                                    <h6 class="alert-heading">Ticket Confirmed!</h6>
+                                    <p class="small mb-2">Your QR code ticket:</p>
+                                    <div id="qrCodeContainer" class="text-center mb-2"></div>
+                                    <p class="small text-muted">Show this QR code at the event entrance</p>
+                                </div>
+                                <button id="cancelRsvpBtn" class="btn btn-outline-danger w-100" style="border-radius: 50px; padding: 12px;">
+                                    <span class="material-symbols-outlined">cancel</span>
+                                    Cancel Ticket
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Attendees Card -->
+                    <div class="sidebar-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="h6 fw-bold text-uppercase small">Who's Going</h4>
+                            <span class="fw-bold" id="attendeeCount" style="color: var(--primary);">0 People</span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3" id="attendeesList">
+                            <p class="text-white-50 small w-100 text-center mb-0">No attendees yet</p>
+                        </div>
+                        <div class="text-center pt-3 border-top border-white border-opacity-10" id="viewGuestList" style="display: none;">
+                            <a href="#" class="text-decoration-none fw-bold text-uppercase small" style="color: var(--primary);">View Guest List</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Firebase Functions -->
+    <script src="auth.js"></script>
+    <script src="events.js"></script>
+    <script src="comments.js"></script>
+    
+    <script>
+        // Get event ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('id');
+        
+        let currentEvent = null;
+        
+        // Initialize
+        waitForFirebase(() => {
+            // Check authentication
+            if (window.firebaseAuth) {
+                window.firebaseAuth.onAuthStateChanged((user) => {
+                    // Load event details even if not authenticated (for public events)
+                    if (eventId) {
+                        loadEventDetails(eventId);
+                        if (user) {
+                            // Only load comments if authenticated
+                            loadComments(eventId);
+                        } else {
+                            const commentsList = document.getElementById('commentsList');
+                            if (commentsList) {
+                                commentsList.innerHTML = '<p class="text-white-50 text-center py-4"><a href="signin.html" style="color: var(--primary);">Sign in</a> to view and post comments</p>';
+                            }
+                        }
+                    } else {
+                        alert('Event ID not found');
+                        window.location.href = 'all-events.html';
+                    }
+                });
+            } else {
+                // If Firebase not ready, try loading anyway
+                if (eventId) {
+                    setTimeout(() => {
+                        if (window.getEventById) {
+                            loadEventDetails(eventId);
+                        }
+                    }, 1000);
+                }
+            }
+        });
+        
+        // Load event details
+        async function loadEventDetails(id) {
+            const result = await window.getEventById(id);
+            if (result.success) {
+                currentEvent = result.event;
+                displayEventDetails(result.event);
+            } else {
+                alert('Error loading event: ' + result.error);
+                window.location.href = 'all-events.html';
+            }
+        }
+        
+        // Display event details
+        function displayEventDetails(event) {
+            // Update page title
+            document.title = event.title + ' - Rzeszow Event Planner';
+            
+            // Update hero image
+            const heroImage = document.querySelector('.hero-image');
+            if (heroImage) {
+                const imageUrl = event.imageURL || event.imageBase64;
+                if (imageUrl) {
+                    if (imageUrl.startsWith('data:image')) {
+                        // Base64 image
+                        heroImage.style.backgroundImage = `url(${imageUrl})`;
+                    } else if (imageUrl.startsWith('http')) {
+                        // URL image
+                        heroImage.style.backgroundImage = `url(${imageUrl})`;
+                    } else {
+                        // Use placeholder
+                        heroImage.style.backgroundImage = `url('https://via.placeholder.com/800x400/392833/ffffff?text=${encodeURIComponent(event.title)}')`;
+                    }
+                } else {
+                    // Use placeholder if no image
+                    heroImage.style.backgroundImage = `url('https://via.placeholder.com/800x400/392833/ffffff?text=${encodeURIComponent(event.title)}')`;
+                }
+            }
+            
+            // Update event title
+            const titleEl = document.getElementById('eventTitle');
+            if (titleEl) titleEl.textContent = event.title;
+            
+            // Update description
+            const descEl = document.getElementById('eventDescription');
+            if (descEl) {
+                if (event.description) {
+                    // Split description by newlines or periods for better formatting
+                    const paragraphs = event.description.split(/\n\n|\. /).filter(p => p.trim());
+                    descEl.innerHTML = paragraphs.map(p => `<p class="text-white mb-3" style="opacity: 0.9;">${p.trim()}${!p.endsWith('.') ? '.' : ''}</p>`).join('');
+                } else {
+                    descEl.innerHTML = '<p class="text-white-50">No description provided.</p>';
+                }
+            }
+            
+            // Update date/time
+            const dateEl = document.getElementById('eventDateDisplay');
+            const timeEl = document.getElementById('eventTimeDisplay');
+            if (event.date) {
+                let date;
+                if (event.date.toDate) {
+                    date = event.date.toDate();
+                } else if (event.date.seconds) {
+                    date = new Date(event.date.seconds * 1000);
+                } else {
+                    date = new Date(event.date);
+                }
+                
+                if (dateEl) {
+                    dateEl.innerHTML = `
+                        <span class="material-symbols-outlined" style="color: var(--primary);">calendar_month</span>
+                        <span>${date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                    `;
+                }
+                
+                if (timeEl && event.startTime) {
+                    const endTime = event.endTime || '';
+                    timeEl.textContent = `${event.startTime}${endTime ? ' - ' + endTime : ''}`;
+                } else if (timeEl) {
+                    timeEl.textContent = 'Time TBD';
+                }
+            } else {
+                if (dateEl) dateEl.innerHTML = '<span class="material-symbols-outlined" style="color: var(--primary);">calendar_month</span><span>TBD</span>';
+                if (timeEl) timeEl.textContent = 'Time TBD';
+            }
+            
+            // Update location
+            const locationEl = document.getElementById('eventLocationDisplay');
+            if (locationEl) {
+                if (event.location) {
+                    locationEl.innerHTML = `
+                        <span class="material-symbols-outlined" style="color: var(--primary);">location_on</span>
+                        <span>${event.location}</span>
+                    `;
+                } else {
+                    locationEl.innerHTML = `
+                        <span class="material-symbols-outlined" style="color: var(--primary);">location_on</span>
+                        <span>Location TBD</span>
+                    `;
+                }
+            }
+            
+            // Update map preview with location
+            const mapPreview = document.getElementById('mapPreview');
+            if (mapPreview && event.location) {
+                // Use Google Maps static image or placeholder
+                const encodedLocation = encodeURIComponent(event.location);
+                mapPreview.style.backgroundImage = `url('https://maps.googleapis.com/maps/api/staticmap?center=${encodedLocation}&zoom=15&size=400x200&markers=color:red|${encodedLocation}&key=YOUR_API_KEY')`;
+                mapPreview.onerror = function() {
+                    this.style.backgroundImage = `url('https://via.placeholder.com/400x200/392833/ffffff?text=${encodedLocation}')`;
+                };
+            }
+            
+            // Update price
+            const priceEl = document.getElementById('eventPriceDisplay');
+            if (priceEl) {
+                priceEl.textContent = event.price > 0 ? `${event.price} PLN` : 'Free';
+            }
+            
+            // Update attendee count
+            const attendeeEl = document.getElementById('attendeeCount');
+            const attendeesList = document.getElementById('attendeesList');
+            const attendeeCount = event.attendeeCount || 0;
+            
+            if (attendeeEl) {
+                attendeeEl.textContent = `${attendeeCount} ${attendeeCount === 1 ? 'Person' : 'People'}`;
+            }
+            
+            // Load attendees
+            if (attendeesList && eventId) {
+                loadAttendees(eventId, attendeesList);
+            }
+            
+            // Load host information
+            if (event.createdBy) {
+                loadHostInfo(event.createdBy);
+            }
+        }
+        
+        // Load comments
+        async function loadComments(eventId) {
+            const result = await window.getCommentsForEvent(eventId);
+            if (result.success) {
+                displayComments(result.comments, eventId);
+            } else {
+                const commentsList = document.getElementById('commentsList');
+                if (commentsList) {
+                    commentsList.innerHTML = '<p class="text-white-50 text-center py-4">No comments yet. Be the first to comment!</p>';
+                }
+            }
+        }
+        
+        // Display comments
+        function displayComments(comments, eventId) {
+            const commentsContainer = document.getElementById('commentsList');
+            const commentCountEl = document.getElementById('commentCount');
+            
+            if (!commentsContainer) return;
+            
+            // Update comment count
+            if (commentCountEl) {
+                commentCountEl.textContent = `${comments.length} Comment${comments.length !== 1 ? 's' : ''}`;
+            }
+            
+            commentsContainer.innerHTML = '';
+            
+            if (comments.length === 0) {
+                commentsContainer.innerHTML = '<p class="text-white-50 text-center py-4">No comments yet. Be the first to comment!</p>';
+                return;
+            }
+            
+            comments.forEach(comment => {
+                const commentEl = document.createElement('div');
+                commentEl.className = 'd-flex gap-3';
+                
+                let dateStr = 'just now';
+                if (comment.createdAt) {
+                    const date = comment.createdAt.toDate ? comment.createdAt.toDate() : new Date(comment.createdAt.seconds * 1000);
+                    dateStr = formatTimeAgo(date);
+                }
+                
+                const currentUser = window.getCurrentUser();
+                const isHost = currentEvent && currentEvent.createdBy === comment.userId;
+                
+                commentEl.innerHTML = `
+                    <div class="avatar rounded-circle bg-primary bg-opacity-20 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                        <span class="material-symbols-outlined" style="color: var(--primary);">person</span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <div>
+                                <span class="fw-bold small">${comment.userName || 'Anonymous'}</span>
+                                ${isHost ? '<span class="badge bg-primary text-white px-2 py-0 ms-2" style="font-size: 10px;">HOST</span>' : ''}
+                                <span class="text-white-50 small ms-2">${dateStr}</span>
+                            </div>
+                            ${currentUser && comment.userId === currentUser.uid ? 
+                                `<button class="btn btn-link text-white-50 p-0 delete-comment-btn" data-comment-id="${comment.id}" style="font-size: 12px;">Delete</button>` : 
+                                ''}
+                        </div>
+                        <div class="comment-card mb-1 ${isHost ? 'border-primary border-opacity-20' : ''}" style="${isHost ? 'background: rgba(244, 37, 175, 0.1); border: 1px solid rgba(244, 37, 175, 0.2);' : ''}">
+                            ${comment.text}
+                        </div>
+                    </div>
+                `;
+                
+                commentsContainer.appendChild(commentEl);
+            });
+            
+            // Add delete comment handlers
+            document.querySelectorAll('.delete-comment-btn').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const commentId = this.getAttribute('data-comment-id');
+                    if (confirm('Delete this comment?')) {
+                        const result = await window.deleteComment(eventId, commentId);
+                        if (result.success) {
+                            loadComments(eventId);
+                        } else {
+                            alert('Error: ' + result.error);
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Format time ago
+        function formatTimeAgo(date) {
+            if (!date) return 'just now';
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return 'just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        
+        // Wait for Firebase to load
+        function waitForFirebase(callback) {
+            if (window.firebaseAuth && window.firebaseDb && window.getEventById) {
+                callback();
+            } else {
+                setTimeout(() => waitForFirebase(callback), 100);
+            }
+        }
+        
+        // Comment form submission
+        const commentForm = document.querySelector('#commentForm');
+        if (commentForm) {
+            commentForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const commentInput = document.getElementById('commentInput');
+                const commentText = commentInput.value.trim();
+                
+                if (!commentText) {
+                    alert('Please enter a comment');
+                    return;
+                }
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                
+                const result = await window.addComment(eventId, commentText);
+                
+                if (result.success) {
+                    commentInput.value = '';
+                    loadComments(eventId);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+                
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        }
+        
+        // Check RSVP status and load QR code if exists
+        async function checkRSVPStatus() {
+            const user = window.getCurrentUser();
+            if (!user) return;
+            
+            try {
+                const rsvpDoc = await window.firebaseDb.collection('events').doc(eventId)
+                    .collection('rsvps').doc(user.uid).get();
+                
+                if (rsvpDoc.exists) {
+                    const rsvpData = rsvpDoc.data();
+                    showTicket(rsvpData.qrCode);
+                } else {
+                    showRSVPButton();
+                }
+            } catch (error) {
+                console.error('Check RSVP error:', error);
+            }
+        }
+        
+        // Show RSVP button
+        function showRSVPButton() {
+            document.getElementById('rsvpBtn').style.display = 'flex';
+            document.getElementById('ticketSection').style.display = 'none';
+        }
+        
+        // Show ticket with QR code
+        function showTicket(qrCode) {
+            document.getElementById('rsvpBtn').style.display = 'none';
+            document.getElementById('ticketSection').style.display = 'block';
+            
+            // Generate QR code
+            const qrContainer = document.getElementById('qrCodeContainer');
+            qrContainer.innerHTML = '';
+            QRCode.toCanvas(qrContainer, qrCode, {
+                width: 200,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, function (error) {
+                if (error) {
+                    console.error('QR code generation error:', error);
+                    qrContainer.innerHTML = '<p class="text-danger small">Error generating QR code</p>';
+                }
+            });
+        }
+        
+        // RSVP button handler
+        const rsvpBtn = document.getElementById('rsvpBtn');
+        if (rsvpBtn) {
+            rsvpBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                if (!window.getCurrentUser()) {
+                    alert('Please sign in to get a ticket');
+                    window.location.href = 'signin.html';
+                    return;
+                }
+                
+                this.disabled = true;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+                
+                const result = await window.rsvpToEvent(eventId);
+                
+                if (result.success) {
+                    if (result.qrCode) {
+                        showTicket(result.qrCode);
+                    } else {
+                        alert('Ticket confirmed!');
+                        checkRSVPStatus();
+                    }
+                } else {
+                    alert('Error: ' + result.error);
+                    this.disabled = false;
+                    this.innerHTML = '<span class="material-symbols-outlined">confirmation_number</span>Get Ticket';
+                }
+            });
+        }
+        
+        // Cancel RSVP button
+        const cancelRsvpBtn = document.getElementById('cancelRsvpBtn');
+        if (cancelRsvpBtn) {
+            cancelRsvpBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                if (!confirm('Are you sure you want to cancel your ticket?')) return;
+                
+                this.disabled = true;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Cancelling...';
+                
+                const result = await window.cancelRSVP(eventId);
+                
+                if (result.success) {
+                    showRSVPButton();
+                    alert('Ticket cancelled');
+                } else {
+                    alert('Error: ' + result.error);
+                    this.disabled = false;
+                    this.innerHTML = '<span class="material-symbols-outlined">cancel</span>Cancel Ticket';
+                }
+            });
+        }
+        
+        // Check RSVP status on load
+        if (eventId) {
+            waitForFirebase(() => {
+                checkRSVPStatus();
+            });
+        }
+    </script>
+</body>
+</html>
+

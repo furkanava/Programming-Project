@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar - Rzeszow Event Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f425af;
+            --background-dark: #22101c;
+            --surface-dark: #2d1b26;
+            --surface-border: #392833;
+            --text-muted: #ba9cb0;
+        }
+        
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            background-color: var(--background-dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: rgba(34, 16, 28, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--surface-border);
+        }
+        
+        .calendar-container {
+            background: var(--surface-dark);
+            border: 1px solid var(--surface-border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 0.75rem;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .calendar-day:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .calendar-day.selected {
+            background: var(--primary);
+            box-shadow: 0 0 20px rgba(244, 37, 175, 0.4);
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        
+        .calendar-day.has-event {
+            color: #fff;
+        }
+        
+        .calendar-day.other-month {
+            opacity: 0.3;
+        }
+        
+        .event-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            margin-top: 4px;
+        }
+        
+        .event-dot.multiple {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .event-dot.multiple .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+        
+        .event-card {
+            background: var(--surface-dark);
+            border: 1px solid var(--surface-border);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .event-card:hover {
+            border-color: rgba(244, 37, 175, 0.5);
+        }
+        
+        .event-image {
+            height: 128px;
+            object-fit: cover;
+        }
+        
+        .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--surface-dark);
+        }
+        
+        .floating-btn {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(244, 37, 175, 0.5);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .floating-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid px-4 px-md-5">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <div class="bg-primary bg-opacity-20 rounded p-1">
+                    <span class="material-symbols-outlined" style="color: var(--primary); font-size: 24px;">celebration</span>
+                </div>
+                <span class="d-none d-sm-inline fw-bold">Rzeszow Event Planner</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-4">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active fw-bold" href="all-events.html" style="color: var(--primary) !important;">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="forum.html">Forum</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3 border-start border-surface-border ps-3">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfyZdO76t7Xi03Jv37odXArYXocN-E1C4M5WFHtz4HnJO8cedeAffE8vTAk6AfYsSDM9gT8MLdSXvvNanPP4bYrGkTGOg80UueszANrRG7laS8OJiSOpBjyqYzrBvPxzmwpGmwBq4NZ21VJNKJjHcM5VRnNkIxrYqa-sAMZrZju2mVu4Lrr-CSYiwKTMNODg7MkpPv7mGERlsK3rl-wmFO1xNs_Cetyrc1yD-DU5XAOy85DXp6KI5L50JkoFnwKvVNpB3_V6L3hqg" 
+                         alt="Profile" class="avatar">
+                    <a href="profile.html" class="text-white text-decoration-none d-none d-lg-block">Profile</a>
+                    <button class="btn btn-sm text-uppercase" style="background: var(--surface-border); border-radius: 50px; padding: 6px 16px; font-size: 10px; font-weight: 700;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid px-4 px-md-5 py-4">
+        <div class="row g-4">
+            <!-- Left Column: Calendar -->
+            <div class="col-lg-8">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+                    <div>
+                        <h1 class="display-4 fw-black mb-1">Calendar</h1>
+                        <p class="text-white-50 mb-0">Manage your social life in Rzeszow</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 bg-surface-dark border border-surface-border p-2 rounded-pill">
+                        <button class="btn btn-link text-white p-2">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </button>
+                        <span class="fw-bold px-4" style="min-width: 140px; text-align: center;">October 2023</span>
+                        <button class="btn btn-link text-white p-2">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="calendar-container">
+                    <!-- Weekday Headers -->
+                    <div class="row g-2 mb-2">
+                        <div class="col text-center text-uppercase small fw-bold" style="color: var(--text-muted);">Mon</div>
+                        <div class="col text-center text-uppercase small fw-bold" style="color: var(--text-muted);">Tue</div>
+                        <div class="col text-center text-uppercase small fw-bold" style="color: var(--text-muted);">Wed</div>
+                        <div class="col text-center text-uppercase small fw-bold" style="color: var(--text-muted);">Thu</div>
+                        <div class="col text-center text-uppercase small fw-bold" style="color: var(--text-muted);">Fri</div>
+                        <div class="col text-center text-uppercase small fw-bold" style="color: var(--primary);">Sat</div>
+                        <div class="col text-center text-uppercase small fw-bold" style="color: var(--primary);">Sun</div>
+                    </div>
+                    
+                    <!-- Calendar Grid -->
+                    <div class="row g-2" style="min-height: 500px;">
+                        <!-- Empty days -->
+                        <div class="col calendar-day other-month"></div>
+                        <div class="col calendar-day other-month"></div>
+                        <div class="col calendar-day other-month"></div>
+                        <div class="col calendar-day other-month"></div>
+                        <div class="col calendar-day other-month"></div>
+                        <div class="col calendar-day other-month"></div>
+                        
+                        <!-- Day 1 -->
+                        <div class="col calendar-day">
+                            <span>1</span>
+                        </div>
+                        <!-- Day 2 -->
+                        <div class="col calendar-day">
+                            <span>2</span>
+                        </div>
+                        <!-- Day 3 -->
+                        <div class="col calendar-day">
+                            <span>3</span>
+                        </div>
+                        <!-- Day 4 -->
+                        <div class="col calendar-day">
+                            <span>4</span>
+                            <div class="event-dot" style="background: rgba(244, 37, 175, 0.4);"></div>
+                        </div>
+                        <!-- Day 5 -->
+                        <div class="col calendar-day has-event">
+                            <span>5</span>
+                            <div class="event-dot"></div>
+                        </div>
+                        <!-- Day 6 -->
+                        <div class="col calendar-day">
+                            <span>6</span>
+                        </div>
+                        <!-- Day 7 -->
+                        <div class="col calendar-day">
+                            <span>7</span>
+                        </div>
+                        <!-- Day 8 -->
+                        <div class="col calendar-day">
+                            <span>8</span>
+                        </div>
+                        <!-- Day 9 -->
+                        <div class="col calendar-day">
+                            <span>9</span>
+                        </div>
+                        <!-- Day 10 -->
+                        <div class="col calendar-day">
+                            <span>10</span>
+                        </div>
+                        <!-- Day 11 -->
+                        <div class="col calendar-day">
+                            <span>11</span>
+                        </div>
+                        <!-- Day 12 -->
+                        <div class="col calendar-day has-event">
+                            <span>12</span>
+                            <div class="event-dot"></div>
+                        </div>
+                        <!-- Day 13 -->
+                        <div class="col calendar-day">
+                            <span>13</span>
+                        </div>
+                        <!-- Day 14 -->
+                        <div class="col calendar-day">
+                            <span>14</span>
+                        </div>
+                        <!-- Day 15 -->
+                        <div class="col calendar-day">
+                            <span>15</span>
+                        </div>
+                        <!-- Day 16 -->
+                        <div class="col calendar-day">
+                            <span>16</span>
+                        </div>
+                        <!-- Day 17 -->
+                        <div class="col calendar-day">
+                            <span>17</span>
+                        </div>
+                        <!-- Day 18 -->
+                        <div class="col calendar-day has-event">
+                            <span>18</span>
+                            <div class="event-dot multiple d-flex gap-1">
+                                <div class="dot"></div>
+                                <div class="dot" style="background: rgba(244, 37, 175, 0.5);"></div>
+                            </div>
+                        </div>
+                        <!-- Day 19 -->
+                        <div class="col calendar-day">
+                            <span>19</span>
+                        </div>
+                        <!-- Day 20 -->
+                        <div class="col calendar-day">
+                            <span>20</span>
+                        </div>
+                        <!-- Day 21 -->
+                        <div class="col calendar-day">
+                            <span>21</span>
+                        </div>
+                        <!-- Day 22 -->
+                        <div class="col calendar-day">
+                            <span>22</span>
+                        </div>
+                        <!-- Day 23 -->
+                        <div class="col calendar-day">
+                            <span>23</span>
+                        </div>
+                        <!-- Day 24 - Selected -->
+                        <div class="col calendar-day selected has-event">
+                            <span class="fw-bold">24</span>
+                            <div class="event-dot multiple d-flex gap-1">
+                                <div class="dot" style="background: #fff;"></div>
+                                <div class="dot" style="background: rgba(255, 255, 255, 0.7);"></div>
+                                <div class="dot" style="background: rgba(255, 255, 255, 0.4);"></div>
+                            </div>
+                        </div>
+                        <!-- Day 25 -->
+                        <div class="col calendar-day">
+                            <span>25</span>
+                        </div>
+                        <!-- Day 26 -->
+                        <div class="col calendar-day">
+                            <span>26</span>
+                        </div>
+                        <!-- Day 27 -->
+                        <div class="col calendar-day">
+                            <span>27</span>
+                        </div>
+                        <!-- Day 28 -->
+                        <div class="col calendar-day has-event">
+                            <span>28</span>
+                            <div class="event-dot"></div>
+                        </div>
+                        <!-- Day 29 -->
+                        <div class="col calendar-day">
+                            <span>29</span>
+                        </div>
+                        <!-- Day 30 -->
+                        <div class="col calendar-day">
+                            <span>30</span>
+                        </div>
+                        <!-- Day 31 -->
+                        <div class="col calendar-day">
+                            <span>31</span>
+                            <div class="event-dot" style="background: rgba(244, 37, 175, 0.4);"></div>
+                        </div>
+                        <!-- Next month -->
+                        <div class="col calendar-day other-month">
+                            <span>1</span>
+                        </div>
+                        <div class="col calendar-day other-month">
+                            <span>2</span>
+                        </div>
+                        <div class="col calendar-day other-month">
+                            <span>3</span>
+                        </div>
+                        <div class="col calendar-day other-month">
+                            <span>4</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Events Sidebar -->
+            <div class="col-lg-4">
+                <div class="sticky-top" style="top: 80px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h4 fw-bold mb-0">Events for Oct 24th</h2>
+                        <span class="badge bg-surface-dark border border-surface-border px-3 py-1">3 Events</span>
+                    </div>
+                    
+                    <div class="d-flex flex-column gap-3">
+                        <!-- Event 1 -->
+                        <div class="event-card">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsgeViGfHuwGzQfUxJ7yro6dCHPzZSkKN15HPY8KqA1YOM7C_flmTaYLRtDM4iNEjDsEsqMI13fHZQRzeoY24p_QnI9936YtXyZ08H_JyJ3RHeBfLatUoULETjnvqUxtiLfy6JrYQgXg2UvzLNy9KsrksHoTsBeT0CbQNFdJgAei2jB6bMG1XoeOQh80giAIdzqut-Nhe0VkK1MSUy-XlfbuAe_fP3BbnXulJbs2B3y6lSu6BYxhJNzyp9GRh6dnL2MV1mfYuFFZA" 
+                                 alt="Event" class="event-image w-100">
+                            <div class="p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">Rzeszow Tech Meetup</h5>
+                                        <p class="text-white small mb-0" style="opacity: 0.9;">
+                                            <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">schedule</span> 18:00
+                                            <span class="mx-1">•</span>
+                                            <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">location_on</span> Lord Jack's Pub
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-white border-opacity-5">
+                                    <div class="d-flex" style="margin-left: -8px;">
+                                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu7X5Ql-Npbvji-h1TjHLBf1zfnxrH4REaoHb7oVio8IZNYfB8Q7coev8jRNX6j-7Y1-ouLi3G4-nIAHQDR2vcvC1ara9_P2BU86GRILfQmas22n8iY1coWBszuglX5Hgs7i5jU-w6A68YthsQLxnxljfqEIDh7Lj76zP4EbPVsaNGowEI0OwZnlgKalLmWHMxHHDJkJVIyk0dLSH0IjLeR3pBLhFrSxnCgPvi33s45S4ps1buJ97G__bpVTDQmNOLIuYWPIvRgc8" 
+                                             alt="User" class="avatar">
+                                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7WjGEG_dxTKKfjix3g2ZI54pSrfxoEFRxcULRoBHb-rGCHGmh4vnjQuatWCjNw9Cl1OQfMneB21nu8rDUYxBUG99ScMjFUsfcWr-9yJY6YSLmUaq4cQMH9ehHsrI3BMEiJgaJEP2HaySQ0H_CGOQsxaEXVBtQ2su5vFs6SwM8mKpa8TbqootfE5WlVVkvfo4PdDZ6qOHWhMyaOAO1vTnWo3YBhBpxiC3f8EAix_AO5BUJXKWjiqZ45Ap-fwsxIoEiSHXP8FDtE4U" 
+                                             alt="User" class="avatar">
+                                        <div class="avatar bg-surface-border d-flex align-items-center justify-content-center" style="font-size: 10px; font-weight: 700;">+39</div>
+                                    </div>
+                                    <button class="btn btn-sm" style="background: var(--surface-border); border-radius: 50px; padding: 6px 16px; font-size: 11px; font-weight: 700;">Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Event 2 -->
+                        <div class="event-card">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6WulYmCEo6V1Q0FG_blhpg5MgkyyiX6UAU36KiJq2hVcVIaMX-Sdi-RVa2J5kU_hhog-3VEXocStWUdFWD5RaySPLRjtintHdY0EKZ6iCYOs8cc9C8CGlfjwDMfEVIE-hHVy_QB_QsOqoYpq-amjDRSHiCwyiIKnZiOT0fZanXwMGSMXCiZzSoJmu4ULzeeHoIWXwCsNCkR79dEkcDyRpBf9X1_XmVFUIk9jlWVWRiyItdFzteVSPMcEVint5CVv_mOYVZSPxH9g" 
+                                 alt="Event" class="event-image w-100">
+                            <div class="p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">Erasmus Karaoke Night</h5>
+                                        <p class="text-white small mb-0" style="opacity: 0.9;">
+                                            <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">schedule</span> 21:00
+                                            <span class="mx-1">•</span>
+                                            <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">location_on</span> Pewex
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-white border-opacity-5">
+                                    <div class="d-flex" style="margin-left: -8px;">
+                                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6puvDGJLs38tbUkso0cJQDQ2lJE_7eRhpZR8mC96WokwJQ3ZF-Cl8Y2B1kMO40o4LTGpMPSvLxwOLYxTPHhifIpq7Bj1lYEDzK0eCu3wwyP3RFSbJOm4EevKJbAUmf8J7Hci05JI29TXUAhv7JJrf_9JbwEKm82W4hufbV2nTqRVNAYmKE2-cQ2mFYlw98ylQ6FOZJ2CUxk84Hz3NfVXPo8f1-tyDK5h7z0b7l3WWxD8RFJStuBWyKvq834Ynx_-7kye0KcMDxYQ" 
+                                             alt="User" class="avatar">
+                                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzGoTlcXbxsQRHU69ft55qIfBASWDLr-uqQcxubkKfAAwNHVbcrchbsRyVD9inlJSjxCdgttA7FBZbg-TP6Q7XFaQ7DDQCFarVh1MsCD3JSTzMvR96BNoKIwS0Tdw4VGauG2seWuqIAWiIhzef3iCw92BkfznwpdCCUpTDQvf4lX-yxqwgX3LUNeQ8VGf5Cb0nshWaV6UZAgHZ6i2gdVNTMUU-YtdlGNgFK65jqTkolZcB21PGDc9BXjClLYFfxWqcX7BG9Z_FeGw" 
+                                             alt="User" class="avatar">
+                                        <div class="avatar bg-surface-border d-flex align-items-center justify-content-center" style="font-size: 10px; font-weight: 700;">+12</div>
+                                    </div>
+                                    <button class="btn btn-sm" style="background: var(--surface-border); border-radius: 50px; padding: 6px 16px; font-size: 11px; font-weight: 700;">Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Event 3 -->
+                        <div class="event-card opacity-75">
+                            <div class="d-flex gap-3 p-3">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDT3HFQ7BVzCfcdQqCqCDybBoyuS8rx5rQAT93LqfN3WXYX9fZ74KNBQEwWj7nzIYRZgHqLfVgQOulqcrNs0oWwm_KdSH2DR1B17NBPm1FE6yq6ivUiYn-ffff_pNOYM7wFby8yNNeFFfP_C84CgNeWkzu5bOHM1NmlQxcwj6Jsa1pGGAJavCruao9CI42I8gK0k9tonpTjEDXj_cc-suscJSjO-uxyS9AcRtdtNeqPd8mO4COHyE_jGJ6dNiEaOTvlVQjAcMnjIho" 
+                                     alt="Event" class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h5 class="fw-bold small mb-1">Late Night Pizza</h5>
+                                    <p class="text-white small mb-2" style="opacity: 0.9;">
+                                        <span class="material-symbols-outlined" style="font-size: 12px; vertical-align: middle;">schedule</span> 00:30
+                                        <span class="mx-1">•</span>
+                                        <span class="material-symbols-outlined" style="font-size: 12px; vertical-align: middle;">location_on</span> Rynek
+                                    </p>
+                                    <a href="#" class="text-decoration-none fw-bold small" style="color: var(--primary);">View Discussion</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <a href="create-event.html" class="floating-btn text-decoration-none" aria-label="Add Event">
+        <span class="material-symbols-outlined" style="font-size: 32px;">add</span>
+    </a>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Events - Rzeszow Event Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f425af;
+            --background-dark: #22101c;
+            --surface-dark: #311c29;
+        }
+        
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            background-color: var(--background-dark);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: rgba(34, 16, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .event-card {
+            background: var(--surface-dark);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s;
+            height: 100%;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(244, 37, 175, 0.5);
+        }
+        
+        .event-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            background-color: var(--card-dark);
+        }
+        
+        .event-date-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(34, 16, 28, 0.8);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .filter-chip {
+            border-radius: 50px;
+            padding: 10px 24px;
+            border: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .filter-chip.active {
+            background: var(--primary);
+            color: #fff;
+        }
+        
+        .filter-chip:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid px-4 px-md-5">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <div class="flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined" style="font-size: 32px; color: var(--primary);">celebration</span>
+                </div>
+                <span class="d-none d-sm-inline fw-bold">Rzeszow Event Planner</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-4">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active fw-bold" href="all-events.html" style="color: var(--primary) !important;">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="forum-access.html">Forum</a></li>
+                    <li class="nav-item"><a class="nav-link auth-link-profile" href="profile.html" style="display: none;">Profile</a></li>
+                </ul>
+                <div class="d-flex gap-2" id="authButtons">
+                    <a href="signin.html" class="btn btn-outline-light btn-sm d-none d-sm-inline-block auth-login" style="border-radius: 50px; padding: 8px 20px;">Login</a>
+                    <a href="register.html" class="btn btn-primary btn-sm auth-login" style="background: var(--primary); border-radius: 50px; padding: 8px 20px;">Register</a>
+                    <button class="btn btn-primary btn-sm auth-logout" onclick="handleLogout()" style="display: none; background: var(--primary); border-radius: 50px; padding: 8px 20px;">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid px-4 px-md-5 py-5">
+        <!-- Header -->
+        <div class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="display-4 fw-bold mb-2">All Events</h1>
+                    <p class="lead text-white" style="opacity: 0.8;">Discover all upcoming events in Rzeszow</p>
+                </div>
+                <a href="index.html" class="btn btn-outline-light d-flex align-items-center gap-2" style="border-radius: 50px;">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    <span class="d-none d-md-inline">Back</span>
+                </a>
+            </div>
+            
+            <!-- Filter Chips -->
+            <div class="d-flex flex-wrap gap-2 mb-4">
+                <button class="filter-chip active">All Events</button>
+                <button class="filter-chip">Today</button>
+                <button class="filter-chip">This Week</button>
+                <button class="filter-chip">This Month</button>
+                <button class="filter-chip">Music</button>
+                <button class="filter-chip">Food</button>
+                <button class="filter-chip">Nightlife</button>
+                <button class="filter-chip">Arts</button>
+            </div>
+        </div>
+        
+        <!-- Events Grid -->
+        <div class="row g-4" id="eventsContainer">
+            <!-- Events will be loaded dynamically here -->
+            <div class="col-12 text-center py-5" id="noEventsMessage" style="display: none;">
+                <p class="text-white mb-3" style="opacity: 0.9;">No public events found.</p>
+                <a href="signin.html" class="btn btn-primary" style="background: var(--primary); border-radius: 50px;">
+                    Sign In to Create Events
+                </a>
+            </div>
+        </div>
+        
+        <!-- Load More -->
+        <div class="text-center mt-5" id="loadMoreContainer" style="display: none;">
+            <button class="btn btn-outline-light" id="loadMoreBtn" style="border-radius: 50px; padding: 12px 32px;">
+                Load More Events
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-5 border-top border-white border-opacity-5 mt-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined" style="color: var(--primary); font-size: 24px;">celebration</span>
+                        <span class="fw-bold fs-5">Rzeszow Event Planner</span>
+                    </div>
+                    <p class="text-white small mb-0" style="opacity: 0.8;">© 2023 Rzeszow Event Planner. All rights reserved.</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex flex-wrap gap-4 justify-content-md-end mb-3">
+                        <a href="#" class="text-white text-decoration-none" style="opacity: 0.8;">About</a>
+                        <a href="#" class="text-white text-decoration-none" style="opacity: 0.8;">Privacy</a>
+                        <a href="#" class="text-white text-decoration-none" style="opacity: 0.8;">Terms</a>
+                        <a href="#" class="text-white text-decoration-none" style="opacity: 0.8;">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Filter chip functionality
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Firebase SDK
+        const firebaseScripts = [
+            'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
+            'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js',
+            'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js',
+            'https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js'
+        ];
+        
+        // Load Firebase scripts
+        let loadedScripts = 0;
+        firebaseScripts.forEach((src, index) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = () => {
+                loadedScripts++;
+                if (loadedScripts === firebaseScripts.length) {
+                    // Load Firebase config and functions
+                    loadFirebaseScripts();
+                }
+            };
+            document.head.appendChild(script);
+        });
+        
+        function loadFirebaseScripts() {
+            const scripts = ['firebase-config.js', 'auth.js', 'events.js'];
+            let loadedCount = 0;
+            
+            scripts.forEach(src => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    loadedCount++;
+                    if (loadedCount === scripts.length) {
+                        // All scripts loaded, wait a bit more then load events
+                        setTimeout(() => {
+                            console.log('All Firebase scripts loaded, loading events...');
+                            if (typeof window.getPublicEvents === 'function') {
+                                loadEvents();
+                            } else {
+                                console.error('getPublicEvents function not found');
+                                // Try again after a delay
+                                setTimeout(() => {
+                                    if (typeof window.getPublicEvents === 'function') {
+                                        loadEvents();
+                                    } else {
+                                        console.error('Still cannot find getPublicEvents');
+                                    }
+                                }, 1000);
+                            }
+                        }, 500);
+                    }
+                };
+                script.onerror = () => {
+                    console.error('Failed to load script:', src);
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
+        let currentEvents = [];
+        let lastDoc = null;
+        const eventsPerPage = 12;
+        
+        // Load public events
+        async function loadEvents(loadMore = false) {
+            if (typeof window.getPublicEvents !== 'function') {
+                console.log('Waiting for Firebase...');
+                setTimeout(() => loadEvents(loadMore), 500);
+                return;
+            }
+            
+            console.log('Loading public events...');
+            const result = await window.getPublicEvents(eventsPerPage);
+            console.log('Load events result:', result);
+            
+            if (result.success) {
+                if (loadMore) {
+                    currentEvents = [...currentEvents, ...result.events];
+                } else {
+                    currentEvents = result.events;
+                }
+                
+                console.log('Current events:', currentEvents.length);
+                displayEvents(currentEvents);
+                
+                // Show/hide load more button
+                const loadMoreContainer = document.getElementById('loadMoreContainer');
+                if (loadMoreContainer) {
+                    loadMoreContainer.style.display = result.events.length >= eventsPerPage ? 'block' : 'none';
+                }
+            } else {
+                console.error('Failed to load events:', result.error);
+                const noEventsMessage = document.getElementById('noEventsMessage');
+                if (noEventsMessage) {
+                    noEventsMessage.style.display = 'block';
+                    noEventsMessage.innerHTML = '<p class="text-white mb-3">Error loading events: ' + result.error + '</p>';
+                }
+            }
+        }
+        
+        // Display events
+        function displayEvents(events) {
+            const eventsContainer = document.getElementById('eventsContainer');
+            const noEventsMessage = document.getElementById('noEventsMessage');
+            
+            if (!eventsContainer) return;
+            
+            if (events.length === 0) {
+                eventsContainer.innerHTML = '';
+                if (noEventsMessage) noEventsMessage.style.display = 'block';
+                return;
+            }
+            
+            if (noEventsMessage) noEventsMessage.style.display = 'none';
+            
+            // Clear container if not loading more
+            if (events.length <= eventsPerPage) {
+                eventsContainer.innerHTML = '';
+            }
+            
+            events.forEach(event => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4';
+                
+                let dateStr = 'TBD';
+                if (event.date) {
+                    if (event.date.toDate) {
+                        const date = event.date.toDate();
+                        dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    } else if (event.date.seconds) {
+                        const date = new Date(event.date.seconds * 1000);
+                        dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    } else if (event.dateString) {
+                        const date = new Date(event.dateString);
+                        dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }
+                }
+                
+                let imageUrl = event.imageURL || event.imageBase64;
+                
+                // Check if it's base64 or URL
+                if (!imageUrl) {
+                    imageUrl = `https://via.placeholder.com/400x200/392833/ffffff?text=${encodeURIComponent(event.title)}`;
+                } else if (imageUrl.startsWith('data:image')) {
+                    // It's already base64, use it directly
+                    // imageUrl is already set
+                } else if (!imageUrl.startsWith('http')) {
+                    // Invalid URL, use placeholder
+                    imageUrl = `https://via.placeholder.com/400x200/392833/ffffff?text=${encodeURIComponent(event.title)}`;
+                }
+                
+                col.innerHTML = `
+                    <div class="event-card">
+                        <div class="position-relative" style="overflow: hidden; border-radius: 1rem 1rem 0 0; background: var(--card-dark); min-height: 200px;">
+                            <img src="${imageUrl}" 
+                                 alt="${event.title}" 
+                                 class="event-image" 
+                                 style="width: 100%; height: 200px; object-fit: cover; display: block;"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x200/392833/ffffff?text=${encodeURIComponent(event.title)}';">
+                            <span class="event-date-badge">${dateStr}</span>
+                        </div>
+                        <div class="p-4">
+                            <h5 class="fw-bold mb-2">${event.title}</h5>
+                            <p class="text-white small mb-3" style="opacity: 0.9;">
+                                <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; color: var(--primary);">location_on</span>
+                                ${event.location}
+                            </p>
+                            <div class="d-flex gap-2 mb-3">
+                                <span class="badge bg-secondary">${event.category || 'Event'}</span>
+                                ${event.price > 0 ? `<span class="badge bg-success">${event.price} PLN</span>` : '<span class="badge bg-info">Free</span>'}
+                            </div>
+                            <a href="event-detail.html?id=${event.id}" class="btn btn-primary w-100" style="background: var(--primary); border-radius: 50px;">View Details</a>
+                        </div>
+                    </div>
+                `;
+                
+                eventsContainer.appendChild(col);
+            });
+        }
+        
+        // Load more button
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('#loadMoreBtn')) {
+                loadEvents(true);
+            }
+        });
+        
+        // Auth state check
+        function waitForFirebase(callback) {
+            if (window.firebaseAuth) {
+                callback();
+            } else {
+                setTimeout(() => waitForFirebase(callback), 100);
+            }
+        }
+        
+        function updateAuthUI(user) {
+            const loginButtons = document.querySelectorAll('.auth-login');
+            const logoutButtons = document.querySelectorAll('.auth-logout');
+            const profileLinks = document.querySelectorAll('.auth-link-profile');
+            
+            if (user) {
+                loginButtons.forEach(btn => btn.style.display = 'none');
+                logoutButtons.forEach(btn => btn.style.display = 'inline-block');
+                profileLinks.forEach(link => link.style.display = 'block');
+            } else {
+                loginButtons.forEach(btn => btn.style.display = 'inline-block');
+                logoutButtons.forEach(btn => btn.style.display = 'none');
+                profileLinks.forEach(link => link.style.display = 'none');
+            }
+        }
+        
+        async function handleLogout() {
+            if (confirm('Are you sure you want to log out?')) {
+                await window.signOut();
+                window.location.reload();
+            }
+        }
+        
+        // Initialize auth check
+        waitForFirebase(() => {
+            if (window.firebaseAuth) {
+                window.firebaseAuth.onAuthStateChanged((user) => {
+                    updateAuthUI(user);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
