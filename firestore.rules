@@ -9,50 +9,33 @@ service cloud.firestore {
     
     // Events collection
     match /events/{eventId} {
-      // Anyone can read public events
-      // Also allow reading all events for admin panel (no auth check for admin)
-      allow read: if resource.data.isPublic == true || 
-                     (request.auth != null && request.auth.uid == resource.data.createdBy) ||
-                     true; // Allow all reads for admin panel
+      // ALLOW ALL READS - for admin panel and public viewing
+      allow read: if true;
       
-      // Only authenticated users can create events
+      // CREATE: Only authenticated users
       allow create: if request.auth != null && 
                        request.auth.uid == request.resource.data.createdBy;
       
-      // Only event creator can update/delete (or admin)
-      allow update, delete: if request.auth != null && 
-                                request.auth.uid == resource.data.createdBy;
+      // UPDATE & DELETE: Event creator OR any authenticated user (for admin panel)
+      // This allows admin panel users to manage all events
+      allow update, delete: if request.auth != null;
       
       // Comments subcollection
       match /comments/{commentId} {
-        // Anyone can read comments of public events
-        allow read: if get(/databases/$(database)/documents/events/$(eventId)).data.isPublic == true ||
-                       (request.auth != null && 
-                        request.auth.uid == get(/databases/$(database)/documents/events/$(eventId)).data.createdBy);
+        // Anyone can read comments
+        allow read: if true;
         
-        // Authenticated users can create comments
-        allow create: if request.auth != null && 
-                         request.auth.uid == request.resource.data.userId;
-        
-        // Users can update/delete their own comments
-        allow update, delete: if request.auth != null && 
-                                  request.auth.uid == resource.data.userId;
+        // Authenticated users can create/update/delete (for admin panel)
+        allow create, update, delete: if request.auth != null;
       }
       
       // RSVPs subcollection
       match /rsvps/{rsvpId} {
-        // Event creator and RSVP owner can read
-        allow read: if request.auth != null && 
-                       (request.auth.uid == resource.data.userId ||
-                        request.auth.uid == get(/databases/$(database)/documents/events/$(eventId)).data.createdBy);
+        // Anyone authenticated can read (for admin panel)
+        allow read: if request.auth != null;
         
-        // Authenticated users can create RSVPs
-        allow create: if request.auth != null && 
-                         request.auth.uid == request.resource.data.userId;
-        
-        // Users can update/delete their own RSVPs
-        allow update, delete: if request.auth != null && 
-                                 request.auth.uid == resource.data.userId;
+        // Authenticated users can create/update/delete
+        allow create, update, delete: if request.auth != null;
       }
     }
     

@@ -128,31 +128,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <div class="bg-primary bg-opacity-20 rounded-circle p-2">
-                    <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">celebration</span>
-                </div>
-                <span class="fw-bold">Rzeszow Event Planner</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto me-4">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="all-events.html">Events</a></li>
-                    <li class="nav-item"><a class="nav-link" href="forum-access.html">Forum</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="signin.html" style="color: #fff !important; position: relative;">Login/Register</a></li>
-                </ul>
-                <a href="index.html" class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" style="border-radius: 50px;">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
-                    <span class="d-none d-md-inline">Back</span>
-                </a>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-container"></div>
 
     <!-- Main Content -->
     <main class="flex-grow d-flex align-items-center justify-content-center py-5 position-relative" style="min-height: calc(100vh - 76px);">
@@ -160,12 +136,12 @@
         <div class="ambient-glow glow-2"></div>
         
         <div class="container position-relative" style="z-index: 10;">
-            <div class="row align-items-center">
-                <!-- Left Column: Login Form -->
-                <div class="col-lg-6 mb-5 mb-lg-0">
+            <div class="row justify-content-center">
+                <!-- Login Form -->
+                <div class="col-lg-5 col-md-7 col-sm-9">
                     <div class="px-4">
-                        <h1 class="display-4 fw-bold mb-2">Welcome back to the event!</h1>
-                        <p class="lead text-white-50 mb-4">Manage your Rzeszow events in one place.</p>
+                        <h1 class="display-4 fw-bold mb-2 text-center">Welcome back!</h1>
+                        <p class="lead text-white-50 mb-4 text-center">Sign in to manage your events</p>
                         
                         <form id="signinForm">
                             <div class="mb-4">
@@ -215,82 +191,15 @@
                         </form>
                     </div>
                 </div>
-                
-                <!-- Right Column: My Events Widget -->
-                <div class="col-lg-6 d-none d-lg-block">
-                    <div class="glass rounded-4 p-4 position-relative overflow-hidden">
-                        <div class="position-absolute inset-0">
-                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvYTW0K3Cw4irqsyhmvAQXNnotKoE_SfQXmvdmCR96_TmA0vbOdP2v2vyTS8v1DSmYPcE3vMiXgua1dbtmOXt8qZoNXxplWzNICHLX9Aryt8lHTi_Ma0MpxtQ4f8h7YiaBYVfBYfEHYmye7R0dNCy8mUVqtMsb9gMrJ-JGM57tqFO_BVQPmW1XVXLeP8TINITfAulhy2BKnJCdwMHOvhsbU70YdKeM5sdrBjQNpBbS1vorz7l_DmGodFBkq_pLPGfIOD9dOdyZKBs" 
-                                 alt="Background" class="w-100 h-100 object-fit-cover opacity-40">
-                            <div class="position-absolute inset-0 bg-gradient-to-top from-background-dark via-background-dark/80 to-transparent"></div>
-                        </div>
-                        <div class="position-relative" style="z-index: 10;">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h3 class="h4 fw-bold d-flex align-items-center gap-2">
-                                    <span class="material-symbols-outlined" style="color: var(--primary);">event_note</span>
-                                    My Events
-                                </h3>
-                                <span class="badge bg-white bg-opacity-10 text-white">Upcoming</span>
-                            </div>
-                            <div class="d-flex flex-column gap-3">
-                                <div class="glass p-3 rounded-3 border border-white border-opacity-5">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <span class="badge bg-primary text-white" style="font-size: 10px;">Today</span>
-                                        <span class="material-symbols-outlined text-white-50" style="font-size: 18px;">more_horiz</span>
-                                    </div>
-                                    <h5 class="fw-bold mb-1">Rzeszow Market Square Meetup</h5>
-                                    <div class="d-flex align-items-center gap-1 text-white-50 small mb-2">
-                                        <span class="material-symbols-outlined" style="font-size: 14px; color: var(--primary);">location_on</span>
-                                        Rynek Główny, Rzeszow
-                                    </div>
-                                    <div class="d-flex gap-4 text-white-50 small">
-                                        <span class="d-flex align-items-center gap-1">
-                                            <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
-                                            18:00
-                                        </span>
-                                        <span class="d-flex align-items-center gap-1">
-                                            <span class="material-symbols-outlined" style="font-size: 14px;">group</span>
-                                            12 Going
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="glass p-3 rounded-3 border border-white border-opacity-5">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <span class="badge text-white" style="background: #9333ea; font-size: 10px;">In Jan</span>
-                                        <span class="material-symbols-outlined text-white-50" style="font-size: 18px;">more_horiz</span>
-                                    </div>
-                                    <h5 class="fw-bold mb-1">Techno Night @ Club XYZ</h5>
-                                    <div class="d-flex align-items-center gap-1 text-white-50 small mb-2">
-                                        <span class="material-symbols-outlined" style="font-size: 14px; color: var(--primary);">location_on</span>
-                                        Club XYZ, Rzeszow
-                                    </div>
-                                    <div class="d-flex gap-4 text-white-50 small">
-                                        <span class="d-flex align-items-center gap-1">
-                                            <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
-                                            22:00
-                                        </span>
-                                        <span class="d-flex align-items-center gap-1">
-                                            <span class="material-symbols-outlined" style="font-size: 14px;">confirmation_number</span>
-                                            Tickets Ready
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-center mt-4 pt-3 border-top border-white border-opacity-10">
-                                <a href="all-events.html" class="text-decoration-none small text-white d-inline-flex align-items-center gap-1 fw-medium" style="color: rgba(255, 255, 255, 0.9) !important;">
-                                    View all events
-                                    <span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </main>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Navbar Component -->
+    <script src="js/navbar-component.js"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -299,10 +208,16 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     
     <!-- Firebase Config -->
-    <script src="firebase-config.js"></script>
+    <script src="js/firebase-config.js"></script>
     
     <!-- Firebase Functions -->
-    <script src="auth.js"></script>
+    <script src="js/auth.js"></script>
+    
+    <!-- Initialize Navbar -->
+    <script>
+        document.getElementById('navbar-container').innerHTML = createNavbar('');
+        initNavbarAuth();
+    </script>
     
     <script>
         // Sign in form handler
@@ -360,32 +275,44 @@
             }
         });
         
+        // Wait for Firebase and auth functions to load
+        function waitForAuth(callback) {
+            if (window.firebaseAuth && window.signInWithGoogle) {
+                callback();
+            } else {
+                console.log('Waiting for Firebase auth to load...');
+                setTimeout(() => waitForAuth(callback), 100);
+            }
+        }
+        
         // Google Sign In button handler function
         async function handleGoogleSignIn(btn) {
             const originalHTML = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
             
-            try {
-                const result = await window.signInWithGoogle();
-                
-                if (result && result.success) {
-                    alert('Login successful! Redirecting to dashboard...');
-                    window.location.href = 'dashboard.html';
-                } else {
-                    const errorMsg = result ? result.error : 'Unknown error occurred';
-                    if (errorMsg !== 'Sign in was cancelled.') {
-                        alert('Google sign in failed: ' + errorMsg);
+            waitForAuth(async () => {
+                try {
+                    const result = await window.signInWithGoogle();
+                    
+                    if (result && result.success) {
+                        alert('Login successful! Redirecting to dashboard...');
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        const errorMsg = result ? result.error : 'Unknown error occurred';
+                        if (errorMsg !== 'Sign in was cancelled.') {
+                            alert('Google sign in failed: ' + errorMsg);
+                        }
+                        btn.disabled = false;
+                        btn.innerHTML = originalHTML;
                     }
+                } catch (error) {
+                    console.error('Google sign in error:', error);
+                    alert('An error occurred: ' + (error.message || error));
                     btn.disabled = false;
                     btn.innerHTML = originalHTML;
                 }
-            } catch (error) {
-                console.error('Google sign in error:', error);
-                alert('An error occurred: ' + (error.message || error));
-                btn.disabled = false;
-                btn.innerHTML = originalHTML;
-            }
+            });
         }
         
         // Google Sign In buttons (main and small)

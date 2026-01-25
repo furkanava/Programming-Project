@@ -66,3 +66,5 @@ If you encounter errors:
 - The authentication state persists across browser sessions (LOCAL persistence)
 - Google accounts don't require email verification (they're automatically verified)
 
+
+

@@ -18,10 +18,19 @@ firebase.initializeApp(firebaseConfig);
 // Initialize services
 const auth = firebase.auth();
 const db = firebase.firestore();
-const storage = firebase.storage();
+let storage = null;
+
+// Initialize storage only if SDK is loaded
+try {
+    if (firebase.storage) {
+        storage = firebase.storage();
+    }
+} catch (e) {
+    console.log('Firebase Storage SDK not loaded (optional)');
+}
 
 // Set persistence to LOCAL (keeps user logged in)
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
 // Auth state observer (will be set up after window objects are available)
 // This is handled in individual pages that need it

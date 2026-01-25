@@ -231,37 +231,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <span class="material-symbols-outlined" style="font-size: 32px;">celebration</span>
-                <span class="d-none d-sm-inline">Rzeszow Event Planner</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto me-4">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="all-events.html">Events</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="forum-access.html">Forum</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link auth-link-profile" href="profile.html" style="display: none;">Profile</a>
-                    </li>
-                </ul>
-                <div class="d-flex gap-2">
-                    <a href="signin.html" class="btn btn-outline-light d-none d-sm-inline-block" style="border-radius: 50px; padding: 10px 24px;">Login</a>
-                    <a href="register.html" class="btn btn-primary-custom">Register</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-container"></div>
 
     <!-- Hero Section -->
     <main class="flex-grow">
@@ -278,7 +248,7 @@
                         <span class="gradient-text">Connect in Rzeszow.</span>
                     </h1>
                     <p class="lead text-white-50 mb-4" style="max-width: 600px; margin: 0 auto;">
-                        The easiest way to organize gatherings, track RSVPs, and discover the hottest events happening in your city tonight.
+                        The easiest way to organize gatherings, track RSVPs, and discover the incredible events happening in your city tonight.
                     </p>
                     <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mt-4">
                         <a href="register.html" class="btn btn-primary-custom btn-lg">Start Planning</a>
@@ -343,11 +313,11 @@
                     View all <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">arrow_forward</span>
                 </a>
             </div>
-            <div class="row g-4 overflow-auto flex-nowrap" id="upcomingEventsContainer" style="overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
+            <div class="row g-4" id="upcomingEventsContainer">
                 <!-- Events will be loaded dynamically here -->
-                <div class="col-12 text-center py-5" id="noUpcomingEvents" style="display: none;">
-                    <p class="text-white-50 mb-3">No upcoming public events found.</p>
-                </div>
+            </div>
+            <div class="col-12 text-center py-5" id="noUpcomingEvents" style="display: none;">
+                <p class="text-white-50 mb-3">No upcoming public events found.</p>
             </div>
         </section>
     </main>
@@ -393,18 +363,35 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     
     <!-- Firebase Config -->
-    <script src="firebase-config.js"></script>
-    
+    <script src="js/firebase-config.js"></script>
+    <!-- Navbar Component -->
+    <script src="js/navbar-component.js"></script>
     <!-- Firebase Functions -->
-    <script src="auth.js"></script>
-    <script src="events.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/events.js"></script>
     
     <script>
+        // Initialize navbar immediately
+        console.log('Initializing navbar...');
+        const navbarContainer = document.getElementById('navbar-container');
+        if (navbarContainer && window.createNavbar) {
+            navbarContainer.innerHTML = createNavbar('home');
+            console.log('Navbar created, initializing auth...');
+            if (window.initNavbarAuth) {
+                initNavbarAuth();
+            } else {
+                console.error('initNavbarAuth not found');
+            }
+        } else {
+            console.error('Navbar container or createNavbar not found');
+        }
+        
         // Wait for Firebase to load
         function waitForFirebase(callback) {
             if (window.firebaseAuth && window.firebaseDb && window.getPublicEvents) {
                 callback();
             } else {
+                console.log('Waiting for Firebase to load...');
                 setTimeout(() => waitForFirebase(callback), 100);
             }
         }
@@ -412,19 +399,27 @@
         // Load upcoming public events
         async function loadUpcomingEvents() {
             waitForFirebase(async () => {
-                const result = await window.getPublicEvents(4); // Limit to 4 events
+                console.log('Loading upcoming events...');
+                const result = await window.getPublicEvents(6); // Limit to 6 events
                 const container = document.getElementById('upcomingEventsContainer');
                 const noEvents = document.getElementById('noUpcomingEvents');
                 
-                if (!container) return;
+                console.log('Events result:', result);
                 
-                if (result.success && result.events.length > 0) {
+                if (!container) {
+                    console.error('Container not found');
+                    return;
+                }
+                
+                if (result.success && result.events && result.events.length > 0) {
+                    console.log('Displaying', result.events.length, 'events');
                     if (noEvents) noEvents.style.display = 'none';
+                    container.style.display = 'flex';
                     container.innerHTML = '';
                     
                     result.events.forEach(event => {
                         const col = document.createElement('div');
-                        col.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
+                        col.className = 'col-12 col-md-6 col-lg-4';
                         
                         let dateStr = 'TBD';
                         if (event.date) {
@@ -473,26 +468,15 @@
                         container.appendChild(col);
                     });
                 } else {
+                    console.log('No events found or error');
+                    container.style.display = 'none';
                     if (noEvents) noEvents.style.display = 'block';
-                    container.innerHTML = '';
                 }
             });
         }
         
-        // Redirect to dashboard if already logged in
-        if (window.firebaseAuth) {
-            window.firebaseAuth.onAuthStateChanged((user) => {
-                if (user) {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    // Load events only if not logged in
-                    loadUpcomingEvents();
-                }
-            });
-        } else {
-            // Load events if Firebase not initialized yet
-            loadUpcomingEvents();
-        }
+        // Load events for everyone (logged in or not)
+        loadUpcomingEvents();
     </script>
 </body>
 </html>

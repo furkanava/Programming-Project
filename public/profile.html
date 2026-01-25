@@ -135,36 +135,15 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container-fluid px-4 px-lg-5">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <div class="bg-primary bg-opacity-20 rounded-circle p-2">
-                    <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">celebration</span>
-                </div>
-                <span class="fw-bold">Rzeszow Event Planner</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto me-4">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="all-events.html">Events</a></li>
-                    <li class="nav-item"><a class="nav-link" href="forum.html">Forum</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="profile.html" style="color: #fff !important; position: relative;">Profile</a></li>
-                </ul>
-                <button class="btn btn-primary btn-sm" onclick="handleLogout()" style="background: var(--primary); border-radius: 50px; padding: 8px 20px; box-shadow: 0 0 15px rgba(244,37,175,0.4);">Log Out</button>
-            </div>
-        </div>
-    </nav>
+    <!-- Navigation (Dynamic) -->
+    <div id="navbar-container"></div>
 
     <!-- Main Content -->
     <main class="container-fluid px-4 px-md-5 px-lg-5 py-4">
         <!-- Page Heading -->
         <div class="mb-4">
-            <h1 class="display-4 fw-black mb-2">My Profile</h1>
-            <p class="text-white" style="opacity: 0.8;">Manage your account settings and preferences</p>
+            <h1 class="display-4 fw-black mb-2 text-white">My Profile</h1>
+            <p class="text-white-50">Manage your account settings and preferences</p>
         </div>
         
         <div class="row g-4">
@@ -174,18 +153,18 @@
                 <div class="profile-header mb-4">
                     <div class="d-flex flex-column flex-md-row align-items-center align-items-md-end gap-4 pt-4">
                         <div class="position-relative">
-                            <img id="profileAvatar" src="" alt="Profile" class="profile-avatar" onerror="this.src='https://via.placeholder.com/128/392833/ffffff?text=' + encodeURIComponent(document.getElementById('profileDisplayName').textContent.charAt(0))">
+                            <img id="profileAvatar" src="https://via.placeholder.com/128/392833/ffffff?text=User" alt="Profile" class="profile-avatar" onerror="this.src='https://via.placeholder.com/128/392833/ffffff?text=User'">
                             <button class="btn btn-primary position-absolute bottom-0 end-0 rounded-circle p-2 border border-dark border-4" style="width: 40px; height: 40px; padding: 0 !important;" onclick="document.getElementById('avatarInput').click()">
                                 <span class="material-symbols-outlined" style="font-size: 16px;">photo_camera</span>
                             </button>
                             <input type="file" id="avatarInput" accept="image/*" class="d-none" onchange="handleAvatarUpload(event)">
                         </div>
                         <div class="text-center text-md-start flex-grow-1">
-                            <h2 class="h3 fw-bold mb-1" id="profileDisplayName">Loading...</h2>
+                            <h2 class="h3 fw-bold mb-1 text-white" id="profileDisplayName">Loading...</h2>
                             <p class="text-white-50 mb-2" id="profileUsername">@username</p>
                             <div id="emailVerificationBadge" class="mb-2"></div>
                             <div class="d-flex gap-2 justify-content-center justify-content-md-start flex-wrap">
-                                <span class="badge bg-white bg-opacity-5 text-white-50 border border-border-dark" id="memberSince">Member since 2024</span>
+                                <span class="badge bg-white bg-opacity-10 text-white border border-white border-opacity-20" id="memberSince">Member since 2024</span>
                                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-20">Event Enthusiast</span>
                             </div>
                         </div>
@@ -296,10 +275,10 @@
                         <div class="col-12">
                             <div class="stats-card">
                                 <div class="d-flex align-items-center justify-content-center gap-1 mb-1">
-                                    <h2 class="display-5 fw-black mb-0">4.9</h2>
+                                    <h2 class="display-5 fw-black mb-0 text-white" id="hostReputation">New</h2>
                                     <span class="material-symbols-outlined text-warning" style="font-size: 24px;">star</span>
                                 </div>
-                                <p class="text-uppercase small fw-medium mb-0" style="color: var(--text-secondary); font-size: 10px; letter-spacing: 1px;">Host Reputation</p>
+                                <p class="text-uppercase small fw-medium mb-0" style="color: var(--text-secondary); font-size: 10px; letter-spacing: 1px;">Host Status</p>
                             </div>
                         </div>
                     </div>
@@ -335,13 +314,18 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     
     <!-- Firebase Config -->
-    <script src="firebase-config.js"></script>
-    
+    <script src="js/firebase-config.js"></script>
+    <!-- Navbar Component -->
+    <script src="js/navbar-component.js"></script>
     <!-- Firebase Functions -->
-    <script src="auth.js"></script>
-    <script src="events.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/events.js"></script>
     
     <script>
+        // Initialize navbar
+        document.getElementById('navbar-container').innerHTML = createNavbar('profile');
+        initNavbarAuth();
+        
         let currentUser = null;
         let userProfile = null;
         
@@ -356,9 +340,10 @@
         
         // Load profile data
         async function loadProfile() {
+            console.log('loadProfile called, isProfileLoaded:', isProfileLoaded);
+            
             if (!window.firebaseAuth || !window.firebaseDb) {
-                console.log('Firebase not ready, waiting...');
-                setTimeout(loadProfile, 500);
+                console.log('Firebase not ready, will retry...');
                 return;
             }
             
@@ -368,6 +353,8 @@
                     window.location.href = 'signin.html';
                     return;
                 }
+                
+                console.log('Loading profile for user:', currentUser.uid);
                 
                 // Reload user to get latest email verification status
                 try {
@@ -433,12 +420,31 @@
                 
                 // Member since
                 const memberSinceEl = document.getElementById('memberSince');
-                if (memberSinceEl && userProfile.createdAt) {
-                    try {
-                        const createdAt = userProfile.createdAt.toDate ? userProfile.createdAt.toDate() : new Date(userProfile.createdAt.seconds * 1000);
-                        memberSinceEl.textContent = 'Member since ' + createdAt.getFullYear();
-                    } catch (dateError) {
-                        console.error('Error parsing date:', dateError);
+                if (memberSinceEl) {
+                    if (userProfile.createdAt) {
+                        try {
+                            let createdAt;
+                            if (userProfile.createdAt.toDate) {
+                                createdAt = userProfile.createdAt.toDate();
+                            } else if (userProfile.createdAt.seconds) {
+                                createdAt = new Date(userProfile.createdAt.seconds * 1000);
+                            } else {
+                                createdAt = new Date(userProfile.createdAt);
+                            }
+                            
+                            const year = createdAt.getFullYear();
+                            if (!isNaN(year) && year > 2000 && year <= new Date().getFullYear()) {
+                                memberSinceEl.textContent = 'Member since ' + year;
+                            } else {
+                                memberSinceEl.textContent = 'Member since ' + new Date().getFullYear();
+                            }
+                        } catch (dateError) {
+                            console.error('Error parsing date:', dateError);
+                            memberSinceEl.textContent = 'Member since ' + new Date().getFullYear();
+                        }
+                    } else {
+                        // If no createdAt, use current year
+                        memberSinceEl.textContent = 'Member since ' + new Date().getFullYear();
                     }
                 }
                 
@@ -453,18 +459,26 @@
                     }
                 }
                 
-                // Load events
+                // Load events once
                 loadProfileEvents();
+                
+                console.log('Profile loaded successfully!');
             } catch (error) {
                 console.error('Error in loadProfile:', error);
-                // Don't redirect on error, just show error
-                alert('Error loading profile: ' + error.message);
+                // Don't show alert on error, just log it
+                console.error('Error loading profile: ' + error.message);
             }
         }
         
         // Load user events for profile
         async function loadProfileEvents() {
             try {
+                // Check if getUserEvents is available
+                if (typeof window.getUserEvents !== 'function') {
+                    console.log('getUserEvents not available yet');
+                    return;
+                }
+                
                 const result = await window.getUserEvents();
                 const container = document.getElementById('profileEventsContainer');
                 const noEvents = document.getElementById('profileNoEvents');
@@ -541,8 +555,12 @@
                     container.appendChild(eventItem);
                 });
             } else {
-                noEvents.style.display = 'block';
-                document.getElementById('eventsHosted').textContent = '0';
+                if (noEvents) noEvents.style.display = 'block';
+                const eventsHostedEl = document.getElementById('eventsHosted');
+                if (eventsHostedEl) eventsHostedEl.textContent = '0';
+            }
+            } catch (error) {
+                console.error('Error loading profile events:', error);
             }
         }
         
@@ -612,7 +630,16 @@
                     }
                     
                     alert('Profile updated successfully!');
-                    loadProfile(); // Reload to show updated data
+                    
+                    // Update display without full reload
+                    const profileDisplayNameEl = document.getElementById('profileDisplayName');
+                    const profileUsernameEl = document.getElementById('profileUsername');
+                    if (profileDisplayNameEl) {
+                        profileDisplayNameEl.textContent = profileData.displayName || user.displayName || 'User';
+                    }
+                    if (profileUsernameEl) {
+                        profileUsernameEl.textContent = profileData.username ? '@' + profileData.username : '@' + (user.email ? user.email.split('@')[0] : 'user');
+                    }
                 } else {
                     alert('Update failed: ' + updateResult.error);
                 }
@@ -738,10 +765,19 @@
             }
         }
         
+        // Track if profile is already loaded to prevent infinite loops
+        let isProfileLoaded = false;
+        
         // Initialize
         function initializeProfile() {
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initializeProfile);
+                return;
+            }
+            
+            // Prevent multiple initializations
+            if (isProfileLoaded) {
+                console.log('Profile already loaded, skipping...');
                 return;
             }
             
@@ -753,18 +789,25 @@
                             return;
                         }
                         
-                        // User is authenticated, load profile
-                        // Don't check email verification here - user can still view profile
-                        loadProfile();
+                        // User is authenticated, load profile only once
+                        if (!isProfileLoaded) {
+                            isProfileLoaded = true;
+                            loadProfile();
+                        }
                     });
                 } else {
                     // Retry if Firebase not ready
                     setTimeout(() => {
+                        isProfileLoaded = false; // Reset flag for retry
                         initializeProfile();
                     }, 500);
                 }
             });
         }
+        
+        // Initialize navbar
+        document.getElementById('navbar-container').innerHTML = createNavbar('profile');
+        initNavbarAuth();
         
         // Start initialization
         initializeProfile();

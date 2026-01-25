@@ -209,19 +209,58 @@ async function getUserEvents() {
     try {
         const user = getCurrentUser();
         if (!user) {
+            console.error('No authenticated user found');
             return { success: false, error: 'User must be authenticated' };
         }
         
-        const snapshot = await window.firebaseDb.collection('events')
-            .where('createdBy', '==', user.uid)
-            .orderBy('date', 'asc')
-            .get();
+        console.log('Fetching events for user:', user.uid);
+        
+        // Try with orderBy first, if it fails, fetch without ordering
+        let snapshot;
+        try {
+            snapshot = await window.firebaseDb.collection('events')
+                .where('createdBy', '==', user.uid)
+                .orderBy('date', 'asc')
+                .get();
+        } catch (error) {
+            console.log('OrderBy failed (missing index), fetching without ordering:', error.message);
+            // If ordering fails (missing composite index), get without ordering
+            try {
+                snapshot = await window.firebaseDb.collection('events')
+                    .where('createdBy', '==', user.uid)
+                    .get();
+            } catch (fallbackError) {
+                console.error('Fallback query also failed:', fallbackError);
+                return { success: false, error: fallbackError.message };
+            }
+        }
         
         const events = [];
         snapshot.forEach(doc => {
             events.push({ id: doc.id, ...doc.data() });
         });
         
+        // Sort events by date manually (client-side)
+        events.sort((a, b) => {
+            let dateA = new Date();
+            let dateB = new Date();
+            
+            if (a.date) {
+                if (a.date.toDate) dateA = a.date.toDate();
+                else if (a.date.seconds) dateA = new Date(a.date.seconds * 1000);
+                else if (a.dateString) dateA = new Date(a.dateString);
+            }
+            
+            if (b.date) {
+                if (b.date.toDate) dateB = b.date.toDate();
+                else if (b.date.seconds) dateB = new Date(b.date.seconds * 1000);
+                else if (b.dateString) dateB = new Date(b.dateString);
+            }
+            
+            return dateA - dateB;
+        });
+        
+        console.log('Loaded user events:', events.length, events);
         return { success: true, events: events };
     } catch (error) {
         console.error('Get user events error:', error);
@@ -278,21 +317,16 @@ async function rsvpToEvent(eventId) {
             attendeeCount: firebase.firestore.FieldValue.increment(1)
         });
         
-        // Generate unique QR code data
-        const qrData = `${eventId}_${user.uid}_${Date.now()}`;
-        
-        // Create RSVP document with QR code
+        // Create RSVP document
         await window.firebaseDb.collection('events').doc(eventId)
             .collection('rsvps').doc(user.uid).set({
                 userId: user.uid,
                 userName: user.displayName || user.email,
                 userEmail: user.email,
-                rsvpAt: firebase.firestore.FieldValue.serverTimestamp(),
-                qrCode: qrData,
-                verified: false
+                rsvpAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         
-        return { success: true, qrCode: qrData };
+        return { success: true };
     } catch (error) {
         console.error('RSVP error:', error);
         return { success: false, error: error.message };
@@ -329,22 +363,33 @@ async function cancelRSVP(eventId) {
 // Delete event
 async function deleteEvent(eventId) {
     try {
+        console.log('deleteEvent called for:', eventId);
+        
         const user = getCurrentUser();
         if (!user) {
+            console.error('Delete failed: User not authenticated');
             return { success: false, error: 'User must be authenticated' };
         }
         
+        console.log('User authenticated:', user.uid);
+        
         const eventDoc = await window.firebaseDb.collection('events').doc(eventId).get();
         if (!eventDoc.exists) {
+            console.error('Delete failed: Event not found');
             return { success: false, error: 'Event not found' };
         }
         
         const event = eventDoc.data();
+        console.log('Event found, createdBy:', event.createdBy, 'Current user:', user.uid);
+        
         if (event.createdBy !== user.uid) {
+            console.error('Delete failed: Not authorized');
             return { success: false, error: 'Not authorized to delete this event' };
         }
         
+        console.log('Deleting event from Firestore...');
         await window.firebaseDb.collection('events').doc(eventId).delete();
+        console.log('Event deleted from Firestore successfully');
         
         return { success: true };
     } catch (error) {

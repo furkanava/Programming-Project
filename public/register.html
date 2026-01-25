@@ -128,29 +128,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid px-4 px-lg-5">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <div class="text-primary">
-                    <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z" fill="currentColor"/>
-                    </svg>
-                </div>
-                <span class="d-none d-sm-inline fw-bold">Rzeszow Event Planner</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto me-4">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="all-events.html">Events</a></li>
-                    <li class="nav-item"><a class="nav-link" href="forum-access.html">Forum</a></li>
-                </ul>
-                <a href="signin.html" class="btn btn-sm" style="background: rgba(244,37,175,0.1); color: var(--primary); border-radius: 50px; padding: 8px 20px;">Log In</a>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-container"></div>
 
     <!-- Background Image -->
     <div class="background-image">
@@ -337,6 +315,9 @@
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Navbar Component -->
+    <script src="js/navbar-component.js"></script>
+    
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -344,10 +325,16 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     
     <!-- Firebase Config -->
-    <script src="firebase-config.js"></script>
+    <script src="js/firebase-config.js"></script>
     
     <!-- Firebase Functions -->
-    <script src="auth.js"></script>
+    <script src="js/auth.js"></script>
+    
+    <!-- Initialize Navbar -->
+    <script>
+        document.getElementById('navbar-container').innerHTML = createNavbar('');
+        initNavbarAuth();
+    </script>
     
     <script>
         // Profile image upload functionality
@@ -545,33 +532,45 @@
             }
         });
         
+        // Wait for Firebase and auth functions to load
+        function waitForAuth(callback) {
+            if (window.firebaseAuth && window.signInWithGoogle) {
+                callback();
+            } else {
+                console.log('Waiting for Firebase auth to load...');
+                setTimeout(() => waitForAuth(callback), 100);
+            }
+        }
+        
         // Google Sign In button handler function (for registration)
         async function handleGoogleRegister(btn) {
             const originalHTML = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
             
-            try {
-                const result = await window.signInWithGoogle();
-                
-                if (result && result.success) {
-                    // Google accounts are automatically verified
-                    alert('Registration successful! Redirecting to dashboard...');
-                    window.location.href = 'dashboard.html';
-                } else {
-                    const errorMsg = result ? result.error : 'Unknown error occurred';
-                    if (errorMsg !== 'Sign in was cancelled.') {
-                        alert('Google sign in failed: ' + errorMsg);
+            waitForAuth(async () => {
+                try {
+                    const result = await window.signInWithGoogle();
+                    
+                    if (result && result.success) {
+                        // Google accounts are automatically verified
+                        alert('Registration successful! Redirecting to dashboard...');
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        const errorMsg = result ? result.error : 'Unknown error occurred';
+                        if (errorMsg !== 'Sign in was cancelled.') {
+                            alert('Google sign in failed: ' + errorMsg);
+                        }
+                        btn.disabled = false;
+                        btn.innerHTML = originalHTML;
                     }
+                } catch (error) {
+                    console.error('Google sign in error:', error);
+                    alert('An error occurred: ' + (error.message || error));
                     btn.disabled = false;
                     btn.innerHTML = originalHTML;
                 }
-            } catch (error) {
-                console.error('Google sign in error:', error);
-                alert('An error occurred: ' + (error.message || error));
-                btn.disabled = false;
-                btn.innerHTML = originalHTML;
-            }
+            });
         }
         
         // Google Sign In button (for registration)

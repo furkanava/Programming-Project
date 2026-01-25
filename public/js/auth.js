@@ -138,6 +138,23 @@ async function getUserProfile(userId) {
         if (userDoc.exists) {
             return { success: true, profile: userDoc.data() };
         } else {
+            // Create a default profile if it doesn't exist
+            const user = window.getCurrentUser();
+            if (user) {
+                const defaultProfile = {
+                    email: user.email,
+                    displayName: user.displayName || 'User',
+                    emailVerified: user.emailVerified || false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    photoURL: user.photoURL || null,
+                    age: null,
+                    gender: null,
+                    location: null,
+                    username: null
+                };
+                await window.firebaseDb.collection('users').doc(userId).set(defaultProfile, { merge: true });
+                return { success: true, profile: defaultProfile };
+            }
             return { success: false, error: 'User profile not found.' };
         }
     } catch (error) {
@@ -156,10 +173,11 @@ async function updateUserProfile(userId, profileData) {
             return { success: false, error: 'Unauthorized.' };
         }
         
-        await window.firebaseDb.collection('users').doc(userId).update({
+        // Use set with merge to create document if it doesn't exist
+        await window.firebaseDb.collection('users').doc(userId).set({
             ...profileData,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        }, { merge: true });
         
         return { success: true };
     } catch (error) {

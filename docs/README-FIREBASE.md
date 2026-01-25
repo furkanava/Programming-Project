@@ -119,3 +119,5 @@ If you get errors about missing indexes:
 - Check browser console for errors
 - Verify firebase-config.js has correct values
 
+
+

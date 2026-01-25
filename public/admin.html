@@ -34,6 +34,9 @@
             background: var(--bg-dark);
             color: white;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
         
         .navbar {
@@ -112,6 +115,10 @@
             vertical-align: middle;
         }
         
+        .table tbody tr {
+            transition: background 0.15s ease;
+        }
+        
         .table tbody tr:hover {
             background: rgba(244, 37, 175, 0.05);
         }
@@ -130,7 +137,11 @@
             font-weight: 600;
             border: none;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+        
+        .btn-action:active {
+            transform: scale(0.95);
         }
         
         .btn-edit {
@@ -159,11 +170,15 @@
             border-radius: 8px;
             padding: 8px 16px;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: background 0.2s ease;
         }
         
         .btn-logout:hover {
             background: #d41d9a;
+        }
+        
+        .btn-logout:active {
+            transform: scale(0.98);
         }
         
         .no-events {
@@ -184,7 +199,7 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 8px;">admin_panel_settings</span>
+                <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 8px; color: white;">admin_panel_settings</span>
                 Admin Panel
             </a>
             <div class="ms-auto">
@@ -231,11 +246,22 @@
         <!-- Events Table -->
         <div class="events-table-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="h4 fw-bold mb-0">All Events</h2>
-                <button class="btn btn-primary" onclick="loadAllEvents()" style="background: var(--primary); border: none;">
-                    <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">refresh</span>
-                    Refresh
-                </button>
+                <div>
+                    <h2 class="h4 fw-bold mb-0">All Events</h2>
+                    <p class="text-white-50 small mb-0 mt-1" id="selectedCount" style="display: none;">
+                        <span id="selectedCountNumber">0</span> event(s) selected
+                    </p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-danger" id="deleteSelectedBtn" onclick="deleteSelected()" style="display: none; border: none;">
+                        <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px; font-size: 16px;">delete</span>
+                        Delete Selected
+                    </button>
+                    <button class="btn btn-primary" onclick="loadAllEvents()" style="background: var(--primary); border: none;">
+                        <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">refresh</span>
+                        Refresh
+                    </button>
+                </div>
             </div>
             
             <div id="eventsContainer">
@@ -251,12 +277,38 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     
-    <!-- Firebase Config -->
-    <script src="firebase-config.js"></script>
+    <!-- Firebase Config (Inline to ensure proper loading) -->
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbBwiY1qX-nmxVKLSRPaKXAjtRxCN0gfY",
+            authDomain: "rzeszow-event-planner.firebaseapp.com",
+            projectId: "rzeszow-event-planner",
+            storageBucket: "rzeszow-event-planner.firebasestorage.app",
+            messagingSenderId: "742566440414",
+            appId: "1:742566440414:web:4c6c5633c3c9d0dfe1814f"
+        };
+        
+        // Initialize Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            window.firebaseAuth = firebase.auth();
+            window.firebaseDb = firebase.firestore();
+            window.firebaseStorage = firebase.storage();
+            
+            // Set persistence (async, non-critical)
+            window.firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+            
+            console.log('✅ Firebase initialized successfully');
+        } catch (error) {
+            console.error('❌ Firebase initialization error:', error.message);
+        }
+    </script>
     
     <!-- Events JS -->
-    <script src="events.js"></script>
+    <script src="js/events.js"></script>
     
     <script>
         // Check admin session
@@ -291,25 +343,12 @@
             }
             
             try {
-                console.log('Loading events from Firestore...');
-                console.log('firebaseDb object:', window.firebaseDb);
-                console.log('firebaseDb.collection:', typeof window.firebaseDb?.collection);
-                
-                // Get all events from Firestore - try without orderBy first to avoid index issues
+                // Get all events from Firestore
                 let eventsSnapshot;
                 try {
-                    // First try without orderBy (most reliable)
-                    console.log('Calling collection("events").get()...');
                     eventsSnapshot = await window.firebaseDb.collection('events').get();
-                    console.log('Events loaded successfully, count:', eventsSnapshot.size);
-                    console.log('Events snapshot:', eventsSnapshot);
                 } catch (getError) {
-                    console.error('Error getting events:', getError);
-                    console.error('Error details:', {
-                        message: getError.message,
-                        code: getError.code,
-                        stack: getError.stack
-                    });
+                    console.error('Error getting events:', getError.message);
                     container.innerHTML = `<div class="no-events"><p style="color: #f87171;">Error loading events: ${getError.message}</p><p class="text-white-50 small mt-2">Check browser console for details.</p></div>`;
                     return;
                 }
@@ -322,9 +361,6 @@
                         ...data
                     });
                 });
-                
-                console.log('Events array:', events);
-                console.log('Total events found:', events.length);
                 
                 // Sort events by createdAt if available (client-side)
                 events.sort((a, b) => {
@@ -353,6 +389,9 @@
                         <table class="table">
                             <thead>
                                 <tr>
+                                    <th style="width: 40px;">
+                                        <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" style="cursor: pointer; width: 18px; height: 18px;">
+                                    </th>
                                     <th>Image</th>
                                     <th>Title</th>
                                     <th>Host</th>
@@ -370,12 +409,16 @@
                     const eventDate = event.date ? (event.date.toDate ? event.date.toDate() : new Date(event.date.seconds * 1000)) : null;
                     const dateStr = eventDate ? eventDate.toLocaleDateString() : 'TBD';
                     
-                    const imageUrl = event.imageBase64 || event.imageURL || 'https://via.placeholder.com/60x60/392833/ffffff?text=No+Image';
+                    // Use a simple colored div as placeholder instead of external image
+                    const imageUrl = event.imageBase64 || event.imageURL || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="60" height="60"%3E%3Crect width="60" height="60" fill="%23392833"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%23ffffff"%3ENo Image%3C/text%3E%3C/svg%3E';
                     
                     tableHTML += `
                         <tr>
                             <td>
-                                <img src="${imageUrl}" alt="${event.title || 'Event'}" class="event-image" onerror="this.src='https://via.placeholder.com/60x60/392833/ffffff?text=No+Image'">
+                                <input type="checkbox" class="event-checkbox" value="${event.id}" onchange="updateSelectedCount()" style="cursor: pointer; width: 18px; height: 18px;">
+                            </td>
+                            <td>
+                                <img src="${imageUrl}" alt="${event.title || 'Event'}" class="event-image" loading="lazy">
                             </td>
                             <td><strong>${event.title || 'Untitled Event'}</strong></td>
                             <td>${event.createdByName || event.hostName || event.hostId || 'Unknown'}</td>
@@ -408,7 +451,6 @@
                 `;
                 
                 container.innerHTML = tableHTML;
-                console.log('Events table rendered successfully');
             } catch (error) {
                 console.error('Error loading events:', error);
                 console.error('Error details:', {
@@ -454,26 +496,143 @@
             }
         }
         
-        // Wait for Firebase to initialize
-        function waitForFirebaseAndLoad() {
-            console.log('Checking Firebase initialization...');
-            console.log('firebaseDb:', window.firebaseDb);
-            console.log('firebaseAuth:', window.firebaseAuth);
+        // Toggle select all checkboxes
+        function toggleSelectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('.event-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+            updateSelectedCount();
+        }
+        
+        // Update selected count display
+        function updateSelectedCount() {
+            const checkboxes = document.querySelectorAll('.event-checkbox');
+            const selected = Array.from(checkboxes).filter(cb => cb.checked);
+            const count = selected.length;
             
-            if (window.firebaseDb) {
-                console.log('Firebase ready, loading events...');
-                loadAllEvents();
+            const selectedCountEl = document.getElementById('selectedCount');
+            const selectedCountNumberEl = document.getElementById('selectedCountNumber');
+            const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            
+            if (count > 0) {
+                selectedCountEl.style.display = 'block';
+                deleteSelectedBtn.style.display = 'inline-flex';
+                selectedCountNumberEl.textContent = count;
             } else {
-                console.log('Firebase not ready, waiting...');
-                setTimeout(waitForFirebaseAndLoad, 500);
+                selectedCountEl.style.display = 'none';
+                deleteSelectedBtn.style.display = 'none';
+            }
+            
+            // Update select all checkbox state
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = count === checkboxes.length && count > 0;
+                selectAllCheckbox.indeterminate = count > 0 && count < checkboxes.length;
+            }
+        }
+        
+        // Delete selected events
+        async function deleteSelected() {
+            const checkboxes = document.querySelectorAll('.event-checkbox:checked');
+            const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (selectedIds.length === 0) {
+                alert('No events selected');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete ${selectedIds.length} event(s)?\n\nThis action cannot be undone!`)) {
+                return;
+            }
+            
+            const deleteBtn = document.getElementById('deleteSelectedBtn');
+            const originalText = deleteBtn.innerHTML;
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Deleting...';
+            
+            try {
+                let successCount = 0;
+                let errorCount = 0;
+                
+                for (const eventId of selectedIds) {
+                    try {
+                        const eventRef = window.firebaseDb.collection('events').doc(eventId);
+                        
+                        // Delete subcollections
+                        const rsvpsSnapshot = await eventRef.collection('rsvps').get();
+                        const deleteRsvps = rsvpsSnapshot.docs.map(doc => doc.ref.delete());
+                        await Promise.all(deleteRsvps);
+                        
+                        const commentsSnapshot = await eventRef.collection('comments').get();
+                        const deleteComments = commentsSnapshot.docs.map(doc => doc.ref.delete());
+                        await Promise.all(deleteComments);
+                        
+                        // Delete event document
+                        await eventRef.delete();
+                        successCount++;
+                    } catch (error) {
+                        errorCount++;
+                        console.error(`Error deleting event ${eventId}:`, error.message);
+                    }
+                }
+                
+                if (errorCount === 0) {
+                    alert(`Successfully deleted ${successCount} event(s)!`);
+                } else {
+                    alert(`Deleted ${successCount} event(s).\nFailed to delete ${errorCount} event(s). Check console for details.`);
+                }
+                
+                loadAllEvents(); // Reload events
+            } catch (error) {
+                console.error('Error in bulk delete:', error);
+                alert('Error deleting events: ' + error.message);
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = originalText;
+            }
+        }
+        
+        // Wait for Firebase to initialize
+        let firebaseWaitCount = 0;
+        const maxWaitAttempts = 20; // 10 seconds max (20 * 500ms)
+        
+        function waitForFirebaseAndLoad() {
+            firebaseWaitCount++;
+            
+            // Check if Firebase is fully initialized
+            if (window.firebaseDb && window.firebaseAuth) {
+                loadAllEvents();
+            } else if (firebaseWaitCount >= maxWaitAttempts) {
+                console.error('Firebase failed to initialize after 5 seconds');
+                
+                const container = document.getElementById('eventsContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="no-events">
+                            <span class="material-symbols-outlined" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5; color: #f87171;">error</span>
+                            <p style="color: #f87171;">Firebase failed to initialize</p>
+                            <p class="text-white-50 small mt-2">Please check:</p>
+                            <ul class="text-white-50 small text-start" style="max-width: 400px; margin: 0 auto;">
+                                <li>Your internet connection</li>
+                                <li>Firebase SDK loaded: ${typeof firebase !== 'undefined' ? '✅' : '❌'}</li>
+                                <li>Firebase initialized: ${firebase?.apps?.length > 0 ? '✅' : '❌'}</li>
+                                <li>Firestore available: ${!!window.firebaseDb ? '✅' : '❌'}</li>
+                                <li>Auth available: ${!!window.firebaseAuth ? '✅' : '❌'}</li>
+                            </ul>
+                            <button class="btn btn-primary mt-3" onclick="location.reload()" style="background: var(--primary);">
+                                Reload Page
+                            </button>
+                        </div>
+                    `;
+                }
+            } else {
+                setTimeout(waitForFirebaseAndLoad, 250);
             }
         }
         
         // Start loading events when page is ready
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                waitForFirebaseAndLoad();
-            });
+            document.addEventListener('DOMContentLoaded', waitForFirebaseAndLoad);
         } else {
             waitForFirebaseAndLoad();
         }

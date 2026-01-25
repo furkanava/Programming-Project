@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Event - Rzeszow Event Planner</title>
+    <title>Edit Event - Rzeszow Event Planner</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -86,51 +86,36 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
+            position: relative;
         }
         
         .image-upload-area:hover {
             border-color: var(--primary);
             background: rgba(244, 37, 175, 0.05);
         }
+        
+        .current-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container-fluid px-4 px-md-5">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <div class="bg-primary bg-opacity-20 rounded-circle p-2">
-                    <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">celebration</span>
-                </div>
-                <span class="fw-bold">Rzeszow Event Planner</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto me-4">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="all-events.html">Events</a></li>
-                    <li class="nav-item"><a class="nav-link" href="forum.html">Forum</a></li>
-                </ul>
-                <a href="dashboard.html" class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" style="border-radius: 50px;">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
-                    <span class="d-none d-md-inline">Back</span>
-                </a>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-container"></div>
 
     <!-- Main Content -->
     <main class="container-fluid px-4 px-md-5 py-5">
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="mb-4">
-                    <h1 class="display-4 fw-bold mb-2">Create New Event</h1>
-                    <p class="text-white-50">Organize an amazing event in Rzeszow</p>
+                    <h1 class="display-4 fw-bold mb-2">Edit Event</h1>
+                    <p class="text-white-50">Update your event details</p>
                 </div>
                 
-                <form class="form-card" id="createEventForm">
+                <form class="form-card" id="editEventForm">
                     <div class="row g-4">
                         <!-- Event Title -->
                         <div class="col-12">
@@ -197,6 +182,10 @@
                         <!-- Image Upload -->
                         <div class="col-12">
                             <label class="form-label">Event Image</label>
+                            <div id="currentImageContainer" style="display: none; margin-bottom: 1rem;">
+                                <p class="text-white-50 small mb-2">Current Image:</p>
+                                <img id="currentImage" class="current-image" alt="Current event image">
+                            </div>
                             <div class="image-upload-area" id="imageUploadArea">
                                 <span class="material-symbols-outlined mb-2" style="font-size: 48px; color: var(--primary);">image</span>
                                 <p class="text-white mb-1" id="uploadText">Click to upload or drag and drop</p>
@@ -218,8 +207,8 @@
                     
                     <!-- Submit Buttons -->
                     <div class="d-flex gap-3 mt-5 pt-4 border-top border-border-dark">
-                        <button type="submit" class="btn btn-primary-custom" id="createEventBtn">
-                            Create Event
+                        <button type="submit" class="btn btn-primary-custom" id="updateEventBtn">
+                            Update Event
                         </button>
                         <a href="dashboard.html" class="btn btn-outline-secondary" style="border-color: var(--border-dark); color: #fff; border-radius: 50px; padding: 12px 32px;">
                             Cancel
@@ -233,6 +222,9 @@
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Navbar Component -->
+    <script src="js/navbar-component.js"></script>
+    
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -240,19 +232,30 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     
     <!-- Firebase Config -->
-    <script src="firebase-config.js"></script>
+    <script src="js/firebase-config.js"></script>
     
     <!-- Firebase Functions -->
-    <script src="auth.js"></script>
-    <script src="events.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/events.js"></script>
+    
+    <!-- Initialize Navbar -->
+    <script>
+        document.getElementById('navbar-container').innerHTML = createNavbar('events');
+        initNavbarAuth();
+    </script>
     
     <script>
+        // Get event ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('id');
+        let currentEvent = null;
+        
         // Wait for Firebase to be fully loaded
         function waitForFirebase(callback, maxAttempts = 20) {
             let attempts = 0;
             const checkFirebase = setInterval(() => {
                 attempts++;
-                if (window.firebaseDb && window.createEvent && window.getCurrentUser) {
+                if (window.firebaseDb && window.getEventById && window.updateEvent && window.getCurrentUser) {
                     clearInterval(checkFirebase);
                     callback();
                 } else if (attempts >= maxAttempts) {
@@ -262,188 +265,171 @@
                 }
             }, 100);
         }
-        // Wait for Firebase to load, then initialize
+        
         waitForFirebase(() => {
             // Check authentication
             if (window.firebaseAuth) {
                 window.firebaseAuth.onAuthStateChanged((user) => {
                     if (!user) {
                         window.location.href = 'signin.html';
+                    } else if (eventId) {
+                        loadEventData();
+                    } else {
+                        alert('Event ID not found');
+                        window.location.href = 'dashboard.html';
                     }
                 });
             }
             
             // Image upload functionality
-            const imageUploadArea = document.getElementById('imageUploadArea');
-            const eventImageInput = document.getElementById('eventImage');
-            const uploadText = document.getElementById('uploadText');
+            document.getElementById('imageUploadArea').addEventListener('click', function() {
+                document.getElementById('eventImage').click();
+            });
             
-            if (imageUploadArea && eventImageInput && uploadText) {
-                // Click to upload
-                imageUploadArea.addEventListener('click', function() {
-                    eventImageInput.click();
-                });
-                
-                // File input change
-                eventImageInput.addEventListener('change', function(e) {
-                    if (e.target.files.length > 0) {
-                        const file = e.target.files[0];
-                        uploadText.textContent = file.name;
-                        imageUploadArea.style.borderColor = 'var(--primary)';
-                        imageUploadArea.style.background = 'rgba(244, 37, 175, 0.1)';
-                    }
-                });
-                
-                // Drag and drop
-                imageUploadArea.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    imageUploadArea.style.borderColor = 'var(--primary)';
-                    imageUploadArea.style.background = 'rgba(244, 37, 175, 0.2)';
-                });
-                
-                imageUploadArea.addEventListener('dragleave', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    imageUploadArea.style.borderColor = 'var(--border-dark)';
-                    imageUploadArea.style.background = 'transparent';
-                });
-                
-                imageUploadArea.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    imageUploadArea.style.borderColor = 'var(--border-dark)';
-                    imageUploadArea.style.background = 'transparent';
-                    
-                    const files = e.dataTransfer.files;
-                    if (files.length > 0) {
-                        const file = files[0];
-                        if (file.type.startsWith('image/')) {
-                            // Create a new FileList-like object
-                            const dataTransfer = new DataTransfer();
-                            dataTransfer.items.add(file);
-                            eventImageInput.files = dataTransfer.files;
-                            
-                            // Trigger change event
-                            const changeEvent = new Event('change', { bubbles: true });
-                            eventImageInput.dispatchEvent(changeEvent);
-                            
-                            uploadText.textContent = file.name;
-                            imageUploadArea.style.borderColor = 'var(--primary)';
-                            imageUploadArea.style.background = 'rgba(244, 37, 175, 0.1)';
-                        } else {
-                            alert('Please select an image file');
-                        }
-                    }
-                });
-            }
-        
-            // Set minimum date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('eventDate').setAttribute('min', today);
+            document.getElementById('eventImage').addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    const fileName = e.target.files[0].name;
+                    document.getElementById('uploadText').textContent = fileName;
+                }
+            });
             
-                // Form submission
-            document.getElementById('createEventForm').addEventListener('submit', async function(e) {
+            // Form submission
+            document.getElementById('editEventForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const createBtn = document.getElementById('createEventBtn');
-                const originalText = createBtn.innerHTML;
+                const updateBtn = document.getElementById('updateEventBtn');
+                const originalText = updateBtn.innerHTML;
                 
                 // Check if Firebase is loaded
-                if (!window.firebaseDb || !window.createEvent) {
+                if (!window.firebaseDb || !window.updateEvent) {
                     alert('Firebase is not loaded. Please refresh the page and try again.');
                     return;
                 }
                 
                 // Disable button and show loading
-                createBtn.disabled = true;
-                createBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+                updateBtn.disabled = true;
+                updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
                 
                 try {
-                // Get form values
-                const eventData = {
-                    title: document.getElementById('eventTitle').value.trim(),
-                    description: document.getElementById('description').value.trim(),
-                    date: document.getElementById('eventDate').value,
-                    startTime: document.getElementById('startTime').value,
-                    endTime: document.getElementById('endTime').value || null,
-                    location: document.getElementById('location').value.trim(),
-                    city: document.getElementById('city').value.trim(),
-                    price: parseFloat(document.getElementById('price').value) || 0,
-                    capacity: document.getElementById('capacity').value ? parseInt(document.getElementById('capacity').value) : null,
-                    category: document.getElementById('category').value,
-                    isPublic: document.getElementById('isPublic').checked
-                };
-                
-                // Validate required fields
-                if (!eventData.title || !eventData.description || !eventData.date || !eventData.startTime || !eventData.location || !eventData.category) {
-                    throw new Error('Please fill in all required fields');
-                }
-                
-                    console.log('Creating event with data:', eventData);
+                    // Get form values
+                    const eventData = {
+                        title: document.getElementById('eventTitle').value.trim(),
+                        description: document.getElementById('description').value.trim(),
+                        date: document.getElementById('eventDate').value,
+                        startTime: document.getElementById('startTime').value,
+                        endTime: document.getElementById('endTime').value || null,
+                        location: document.getElementById('location').value.trim(),
+                        city: document.getElementById('city').value.trim(),
+                        price: parseFloat(document.getElementById('price').value) || 0,
+                        capacity: document.getElementById('capacity').value ? parseInt(document.getElementById('capacity').value) : null,
+                        category: document.getElementById('category').value,
+                        isPublic: document.getElementById('isPublic').checked
+                    };
                     
-                    // Create event
-                    const result = await window.createEvent(eventData);
+                    // Validate required fields
+                    if (!eventData.title || !eventData.description || !eventData.date || !eventData.startTime || !eventData.location || !eventData.category) {
+                        throw new Error('Please fill in all required fields');
+                    }
                     
-                    console.log('Create event result:', result);
+                    // Update event
+                    const result = await window.updateEvent(eventId, eventData);
                     
                     if (result && result.success) {
-                        console.log('Event created successfully with ID:', result.eventId);
-                        
-                        // Upload image if provided
+                        // Upload new image if provided
                         const imageFile = document.getElementById('eventImage').files[0];
                         if (imageFile) {
-                            console.log('Processing image...', 'File size:', imageFile.size, 'File type:', imageFile.type);
-                            
-                            // Check file size before upload
-                            const maxSize = 5 * 1024 * 1024; // 5MB
-                            if (imageFile.size > maxSize) {
-                                console.warn('Image too large, skipping. Size:', imageFile.size);
-                                alert('Image is too large (max 5MB). Event created but image not uploaded.');
-                            } else {
-                                // Update button to show image processing
-                                createBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing image...';
-                                
-                                try {
-                                    // Upload and compress image (saves as base64 to Firestore)
-                                    const uploadResult = await window.uploadEventImage(result.eventId, imageFile);
-                                    console.log('Upload result:', uploadResult);
-                                    
-                                    if (uploadResult && uploadResult.success) {
-                                        console.log('Image processed and saved successfully');
-                                    } else {
-                                        console.error('Image processing failed:', uploadResult?.error);
-                                        alert('Event created but image processing failed: ' + (uploadResult?.error || 'Unknown error'));
-                                    }
-                                } catch (err) {
-                                    console.error('Error processing image:', err);
-                                    alert('Event created but image processing failed. You can add it later by editing the event.');
+                            updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing image...';
+                            try {
+                                const uploadResult = await window.uploadEventImage(eventId, imageFile);
+                                if (uploadResult && uploadResult.success) {
+                                    console.log('Image processed and saved successfully');
+                                } else {
+                                    console.error('Image processing failed:', uploadResult?.error);
+                                    alert('Event updated but image processing failed: ' + (uploadResult?.error || 'Unknown error'));
                                 }
+                            } catch (err) {
+                                console.error('Error processing image:', err);
+                                alert('Event updated but image processing failed.');
                             }
                         }
                         
-                        // Reset button and redirect
-                        createBtn.disabled = false;
-                        createBtn.innerHTML = originalText;
+                        // Reset button
+                        updateBtn.disabled = false;
+                        updateBtn.innerHTML = originalText;
                         
-                        // Show success and redirect
-                        alert('Event created successfully!');
+                        alert('Event updated successfully!');
                         window.location.href = 'dashboard.html';
                     } else {
                         const errorMsg = result ? result.error : 'Unknown error occurred';
-                        console.error('Create event failed:', errorMsg);
-                        createBtn.disabled = false;
-                        createBtn.innerHTML = originalText;
+                        updateBtn.disabled = false;
+                        updateBtn.innerHTML = originalText;
                         alert('Error: ' + errorMsg);
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    createBtn.disabled = false;
-                    createBtn.innerHTML = originalText;
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = originalText;
                     alert('An error occurred: ' + (error.message || error));
                 }
             });
         });
+        
+        // Load event data
+        async function loadEventData() {
+            if (!eventId) return;
+            
+            const result = await window.getEventById(eventId);
+            if (result.success) {
+                currentEvent = result.event;
+                
+                // Check if user owns the event
+                const user = window.getCurrentUser();
+                if (user && currentEvent.createdBy !== user.uid) {
+                    alert('You are not authorized to edit this event');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+                
+                // Populate form
+                document.getElementById('eventTitle').value = currentEvent.title || '';
+                document.getElementById('description').value = currentEvent.description || '';
+                
+                // Date
+                if (currentEvent.date) {
+                    let dateStr = '';
+                    if (currentEvent.dateString) {
+                        dateStr = currentEvent.dateString;
+                    } else if (currentEvent.date.toDate) {
+                        const date = currentEvent.date.toDate();
+                        dateStr = date.toISOString().split('T')[0];
+                    } else if (currentEvent.date.seconds) {
+                        const date = new Date(currentEvent.date.seconds * 1000);
+                        dateStr = date.toISOString().split('T')[0];
+                    }
+                    document.getElementById('eventDate').value = dateStr;
+                }
+                
+                document.getElementById('startTime').value = currentEvent.startTime || '';
+                document.getElementById('endTime').value = currentEvent.endTime || '';
+                document.getElementById('location').value = currentEvent.location || '';
+                document.getElementById('city').value = currentEvent.city || 'Rzeszow';
+                document.getElementById('price').value = currentEvent.price || 0;
+                document.getElementById('capacity').value = currentEvent.capacity || '';
+                document.getElementById('category').value = currentEvent.category || '';
+                document.getElementById('isPublic').checked = currentEvent.isPublic !== false;
+                
+                // Show current image if exists
+                // Check for image (base64 or URL)
+                const imageUrl = currentEvent.imageURL || currentEvent.imageBase64;
+                if (imageUrl) {
+                    document.getElementById('currentImage').src = imageUrl;
+                    document.getElementById('currentImageContainer').style.display = 'block';
+                }
+            } else {
+                alert('Error loading event: ' + result.error);
+                window.location.href = 'dashboard.html';
+            }
+        }
     </script>
 </body>
 </html>

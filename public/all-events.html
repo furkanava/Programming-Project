@@ -6,6 +6,8 @@
     <title>All Events - Rzeszow Event Planner</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lottie Player -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,36 +90,35 @@
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
         }
+        
+        /* Loading Animation Color Customization */
+        #loadingAnimation svg path[stroke*="rgb(73"],
+        #loadingAnimation svg path[stroke*="#49"],
+        #loadingAnimation svg ellipse[stroke*="rgb(73"],
+        #loadingAnimation svg ellipse[stroke*="#49"],
+        #loadingAnimation svg circle[stroke*="rgb(73"],
+        #loadingAnimation svg circle[stroke*="#49"] {
+            stroke: var(--primary) !important;
+        }
+        
+        #loadingAnimation svg path[fill*="rgb(73"],
+        #loadingAnimation svg path[fill*="#49"],
+        #loadingAnimation svg ellipse[fill*="rgb(73"],
+        #loadingAnimation svg ellipse[fill*="#49"],
+        #loadingAnimation svg circle[fill*="rgb(73"],
+        #loadingAnimation svg circle[fill*="#49"] {
+            fill: var(--primary) !important;
+        }
+        
+        /* Make loading container smooth */
+        #loadingContainer, #noEventsMessage, #eventsContainer {
+            transition: opacity 0.3s ease-in-out;
+        }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container-fluid px-4 px-md-5">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <div class="flex items-center justify-center text-primary">
-                    <span class="material-symbols-outlined" style="font-size: 32px; color: var(--primary);">celebration</span>
-                </div>
-                <span class="d-none d-sm-inline fw-bold">Rzeszow Event Planner</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto me-4">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link active fw-bold" href="all-events.html" style="color: var(--primary) !important;">Events</a></li>
-                    <li class="nav-item"><a class="nav-link" href="forum-access.html">Forum</a></li>
-                    <li class="nav-item"><a class="nav-link auth-link-profile" href="profile.html" style="display: none;">Profile</a></li>
-                </ul>
-                <div class="d-flex gap-2" id="authButtons">
-                    <a href="signin.html" class="btn btn-outline-light btn-sm d-none d-sm-inline-block auth-login" style="border-radius: 50px; padding: 8px 20px;">Login</a>
-                    <a href="register.html" class="btn btn-primary btn-sm auth-login" style="background: var(--primary); border-radius: 50px; padding: 8px 20px;">Register</a>
-                    <button class="btn btn-primary btn-sm auth-logout" onclick="handleLogout()" style="display: none; background: var(--primary); border-radius: 50px; padding: 8px 20px;">Logout</button>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- Navigation (Dynamic) -->
+    <div id="navbar-container"></div>
 
     <!-- Main Content -->
     <main class="container-fluid px-4 px-md-5 py-5">
@@ -126,7 +127,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="display-4 fw-bold mb-2">All Events</h1>
-                    <p class="lead text-white" style="opacity: 0.8;">Discover all upcoming events in Rzeszow</p>
+                    <p class="lead text-white" style="opacity: 0.8;">Discover all upcoming events</p>
                 </div>
                 <a href="index.html" class="btn btn-outline-light d-flex align-items-center gap-2" style="border-radius: 50px;">
                     <span class="material-symbols-outlined">arrow_back</span>
@@ -147,15 +148,30 @@
             </div>
         </div>
         
+        <!-- Loading Animation -->
+        <div id="loadingContainer" class="text-center py-5" style="display: block;">
+            <div id="loadingAnimation" style="width: 300px; height: 300px; margin: 0 auto;"></div>
+            <h4 class="text-white mt-3 mb-2 fw-semibold">Loading Events...</h4>
+            <p class="text-white-50">Please wait while we fetch the events for you</p>
+        </div>
+        
         <!-- Events Grid -->
-        <div class="row g-4" id="eventsContainer">
+        <div class="row g-4" id="eventsContainer" style="display: none;">
             <!-- Events will be loaded dynamically here -->
-            <div class="col-12 text-center py-5" id="noEventsMessage" style="display: none;">
-                <p class="text-white mb-3" style="opacity: 0.9;">No public events found.</p>
-                <a href="signin.html" class="btn btn-primary" style="background: var(--primary); border-radius: 50px;">
-                    Sign In to Create Events
-                </a>
-            </div>
+        </div>
+        
+        <!-- No Events Found Animation -->
+        <div id="noEventsMessage" class="text-center py-5" style="display: none;">
+            <div id="notFoundAnimation" style="width: 400px; height: 400px; margin: 0 auto;"></div>
+            <h3 class="text-white mt-3 mb-2 fw-bold">No Events Found</h3>
+            <p class="text-white-50 mb-4">Sorry, there are no events available at the moment.</p>
+            <a href="create-event.html" class="btn btn-primary me-2" style="background: var(--primary); border: none; border-radius: 50px; padding: 12px 32px; box-shadow: 0 0 20px rgba(244,37,175,0.4);">
+                Create Event
+            </a>
+            <button class="btn btn-outline-light" onclick="location.reload()" style="border-radius: 50px; padding: 12px 32px;">
+                <span class="material-symbols-outlined align-middle" style="font-size: 18px;">refresh</span>
+                Refresh
+            </button>
         </div>
         
         <!-- Load More -->
@@ -175,7 +191,7 @@
                         <span class="material-symbols-outlined" style="color: var(--primary); font-size: 24px;">celebration</span>
                         <span class="fw-bold fs-5">Rzeszow Event Planner</span>
                     </div>
-                    <p class="text-white small mb-0" style="opacity: 0.8;">© 2023 Rzeszow Event Planner. All rights reserved.</p>
+                    <p class="text-white small mb-0" style="opacity: 0.8;">© 2024 Rzeszow Event Planner. All rights reserved.</p>
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex flex-wrap gap-4 justify-content-md-end mb-3">
@@ -191,6 +207,10 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Lottie Web -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    
     <script>
         // Filter chip functionality
         document.querySelectorAll('.filter-chip').forEach(chip => {
@@ -208,6 +228,19 @@
             'https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js'
         ];
         
+        // Load navbar component first
+        const navbarScript = document.createElement('script');
+        navbarScript.src = 'js/navbar-component.js';
+        navbarScript.onload = () => {
+            console.log('Navbar component loaded');
+            // Initialize navbar after component is loaded
+            if (typeof createNavbar === 'function') {
+                document.getElementById('navbar-container').innerHTML = createNavbar('events');
+                initNavbarAuth();
+            }
+        };
+        document.head.appendChild(navbarScript);
+        
         // Load Firebase scripts
         let loadedScripts = 0;
         firebaseScripts.forEach((src, index) => {
@@ -223,8 +256,35 @@
             document.head.appendChild(script);
         });
         
+        // Constants - must be declared before use
+        let currentEvents = [];
+        let lastDoc = null;
+        const eventsPerPage = 12;
+        let loadingAnimationInstance = null;
+        let notFoundAnimationInstance = null;
+        
+        // Initialize Loading Animation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing loading animation...');
+            const loadingContainer = document.getElementById('loadingAnimation');
+            
+            if (loadingContainer && typeof lottie !== 'undefined') {
+                console.log('Loading animation starting...');
+                loadingAnimationInstance = lottie.loadAnimation({
+                    container: loadingContainer,
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: true,
+                    path: 'assets/animations/loading.json'
+                });
+                console.log('Loading animation initialized');
+            } else {
+                console.error('Loading container or lottie not found');
+            }
+        });
+        
         function loadFirebaseScripts() {
-            const scripts = ['firebase-config.js', 'auth.js', 'events.js'];
+            const scripts = ['js/firebase-config.js', 'js/auth.js', 'js/events.js'];
             let loadedCount = 0;
             
             scripts.forEach(src => {
@@ -259,10 +319,6 @@
             });
         }
         
-        let currentEvents = [];
-        let lastDoc = null;
-        const eventsPerPage = 12;
-        
         // Load public events
         async function loadEvents(loadMore = false) {
             if (typeof window.getPublicEvents !== 'function') {
@@ -271,49 +327,96 @@
                 return;
             }
             
-            console.log('Loading public events...');
-            const result = await window.getPublicEvents(eventsPerPage);
-            console.log('Load events result:', result);
+            // Show loading if not loading more
+            if (!loadMore) {
+                const loadingContainer = document.getElementById('loadingContainer');
+                if (loadingContainer) {
+                    loadingContainer.style.display = 'block';
+                }
+            }
             
-            if (result.success) {
-                if (loadMore) {
-                    currentEvents = [...currentEvents, ...result.events];
+            console.log('Loading public events...');
+            
+            try {
+                const result = await window.getPublicEvents(eventsPerPage);
+                console.log('Load events result:', result);
+                
+                if (result.success) {
+                    if (loadMore) {
+                        currentEvents = [...currentEvents, ...result.events];
+                    } else {
+                        currentEvents = result.events;
+                    }
+                    
+                    console.log('Current events:', currentEvents.length);
+                    displayEvents(currentEvents);
+                    
+                    // Show/hide load more button
+                    const loadMoreContainer = document.getElementById('loadMoreContainer');
+                    if (loadMoreContainer) {
+                        loadMoreContainer.style.display = result.events.length >= eventsPerPage ? 'block' : 'none';
+                    }
                 } else {
-                    currentEvents = result.events;
+                    // Error occurred - show not found animation
+                    console.error('Failed to load events:', result.error);
+                    displayEvents([]); // This will show the not found animation
                 }
-                
-                console.log('Current events:', currentEvents.length);
-                displayEvents(currentEvents);
-                
-                // Show/hide load more button
-                const loadMoreContainer = document.getElementById('loadMoreContainer');
-                if (loadMoreContainer) {
-                    loadMoreContainer.style.display = result.events.length >= eventsPerPage ? 'block' : 'none';
-                }
-            } else {
-                console.error('Failed to load events:', result.error);
-                const noEventsMessage = document.getElementById('noEventsMessage');
-                if (noEventsMessage) {
-                    noEventsMessage.style.display = 'block';
-                    noEventsMessage.innerHTML = '<p class="text-white mb-3">Error loading events: ' + result.error + '</p>';
-                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+                displayEvents([]); // Show not found animation on error
             }
         }
         
         // Display events
         function displayEvents(events) {
+            const loadingContainer = document.getElementById('loadingContainer');
             const eventsContainer = document.getElementById('eventsContainer');
             const noEventsMessage = document.getElementById('noEventsMessage');
             
             if (!eventsContainer) return;
             
+            // Hide loading animation
+            if (loadingContainer) {
+                loadingContainer.style.display = 'none';
+                if (loadingAnimationInstance) {
+                    loadingAnimationInstance.stop();
+                }
+            }
+            
             if (events.length === 0) {
+                // Show no events message with animation
                 eventsContainer.innerHTML = '';
-                if (noEventsMessage) noEventsMessage.style.display = 'block';
+                eventsContainer.style.display = 'none';
+                
+                if (noEventsMessage) {
+                    noEventsMessage.style.display = 'block';
+                    
+                    // Load Not Found animation
+                    if (typeof lottie !== 'undefined' && !notFoundAnimationInstance) {
+                        const notFoundContainer = document.getElementById('notFoundAnimation');
+                        if (notFoundContainer) {
+                            console.log('Loading not found animation...');
+                            notFoundAnimationInstance = lottie.loadAnimation({
+                                container: notFoundContainer,
+                                renderer: 'svg',
+                                loop: true,
+                                autoplay: true,
+                                path: 'assets/animations/notfound.json'
+                            });
+                        }
+                    }
+                }
                 return;
             }
             
-            if (noEventsMessage) noEventsMessage.style.display = 'none';
+            // Show events
+            eventsContainer.style.display = '';
+            if (noEventsMessage) {
+                noEventsMessage.style.display = 'none';
+                if (notFoundAnimationInstance) {
+                    notFoundAnimationInstance.stop();
+                }
+            }
             
             // Clear container if not loading more
             if (events.length <= eventsPerPage) {

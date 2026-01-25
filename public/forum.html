@@ -101,6 +101,30 @@
             font-weight: 700;
         }
         
+        .bg-purple-100 { background: rgba(168, 85, 247, 0.2) !important; }
+        .text-purple-600 { color: #a855f7 !important; }
+        .bg-pink-100 { background: rgba(236, 72, 153, 0.2) !important; }
+        .text-pink-600 { color: #ec4899 !important; }
+        .bg-orange-100 { background: rgba(249, 115, 22, 0.2) !important; }
+        .text-orange-600 { color: #f97316 !important; }
+        .bg-green-100 { background: rgba(34, 197, 94, 0.2) !important; }
+        .text-green-600 { color: #22c55e !important; }
+        .bg-blue-100 { background: rgba(59, 130, 246, 0.2) !important; }
+        .text-blue-600 { color: #3b82f6 !important; }
+        .bg-yellow-100 { background: rgba(234, 179, 8, 0.2) !important; }
+        .text-yellow-600 { color: #eab308 !important; }
+        .bg-gray-100 { background: rgba(156, 163, 175, 0.2) !important; }
+        .text-gray-600 { color: #9ca3af !important; }
+        
+        /* Lottie animation color override */
+        #loadingAnimation svg [fill="rgb(73,128,200)"],
+        #loadingAnimation svg [fill="#4980c8"],
+        #loadingAnimation svg [stroke="rgb(73,128,200)"],
+        #loadingAnimation svg [stroke="#4980c8"] {
+            fill: var(--primary) !important;
+            stroke: var(--primary) !important;
+        }
+        
         .floating-btn {
             position: fixed;
             bottom: 24px;
@@ -123,33 +147,8 @@
     </style>
 </head>
 <body class="dark">
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container-fluid px-4 px-md-5">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <div class="text-primary">
-                    <span class="material-symbols-outlined" style="font-size: 32px;">celebration</span>
-                </div>
-                <span class="d-none d-sm-inline fw-bold">Rzeszow Event Planner</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto me-4">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="all-events.html">Events</a></li>
-                    <li class="nav-item"><a class="nav-link active fw-bold" href="forum.html" style="color: var(--primary) !important;">Forum</a></li>
-                    <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
-                </ul>
-                <div class="d-flex align-items-center gap-3">
-                    <a href="index.html" class="btn btn-primary btn-sm" style="background: var(--primary); border-radius: 50px; padding: 8px 20px;">Log out</a>
-                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcyfOlzt4-jPwbkoXKRfRNYxqkM3XJ62bU4Ode8yFU8uY74AVMKRSmHbKmjYct-hY4w43I-U6CerzCeuDDCFmX7dLjG3ILenb20YbYxbw0zrSIBjDoI5l6Zv4lgqfXT3I0WOH73b940JaLWRGGjGXe6tQD5L4is37DPN8owVNT8MYcAbdRSJvP7Bbvt9Q1HZL0-KejocKn-6MCpFRoTytv-a9zHATGKsNAG6R_7t0rnjM4dZUKasTUEjTbw5nYQxId3Mrl2faN3MM" 
-                         alt="Profile" class="avatar border border-primary border-opacity-20">
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- Navigation (Dynamic) -->
+    <div id="navbar-container"></div>
 
     <!-- Hero Section -->
     <main class="py-5 position-relative">
@@ -168,10 +167,10 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <a href="create-event.html" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 text-decoration-none" style="background: var(--primary); border-radius: 50px; padding: 14px;">
+                    <button class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2" style="background: var(--primary); border-radius: 50px; padding: 14px; border: none;" data-bs-toggle="modal" data-bs-target="#createPostModal">
                         <span class="material-symbols-outlined">add</span>
                         <span class="d-none d-sm-inline">Start New Topic</span>
-                    </a>
+                    </button>
                 </div>
             </div>
             
@@ -185,7 +184,27 @@
             </div>
             
             <!-- Forum Grid -->
-            <div class="row g-4">
+            <div class="row g-4" id="forumPosts">
+                <!-- Loading -->
+                <div class="col-12 text-center py-5" id="loadingPosts">
+                    <div id="loadingAnimation" style="width: 200px; height: 200px; margin: 0 auto;"></div>
+                    <p class="text-white-50 mt-3">Loading posts...</p>
+                </div>
+                
+                <!-- No Posts Message -->
+                <div class="col-12 text-center py-5" id="noPosts" style="display: none;">
+                    <div id="noPostsAnimation" style="width: 300px; height: 200px; margin: 0 auto;"></div>
+                    <h3 class="mt-4 mb-2 text-white">No Posts Yet</h3>
+                    <p class="text-white-50">Be the first to start a discussion!</p>
+                    <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#createPostModal" style="background: var(--primary); border: none;">
+                        <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 8px;">add</span>
+                        Start New Topic
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Dummy Forum Grid (Hidden) -->
+            <div class="row g-4" style="display: none;">
                 <!-- Card 1 -->
                 <div class="col-md-6 col-lg-4">
                     <div class="forum-card">
@@ -401,12 +420,381 @@
     </main>
 
     <!-- Floating Action Button -->
-    <a href="create-event.html" class="floating-btn d-md-none text-decoration-none">
+    <button class="floating-btn d-md-none" data-bs-toggle="modal" data-bs-target="#createPostModal" style="border: none;">
         <span class="material-symbols-outlined" style="font-size: 32px;">add</span>
-    </a>
+    </button>
+
+    <!-- Create Post Modal -->
+    <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: var(--card-dark); border: 1px solid var(--border-dark);">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-dark);">
+                    <h5 class="modal-title text-white" id="createPostModalLabel">Start New Topic</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createPostForm">
+                        <div class="mb-3">
+                            <label for="postTitle" class="form-label text-white">Title</label>
+                            <input type="text" class="form-control" id="postTitle" required style="background: var(--input-dark); border: 1px solid var(--border-dark); color: white;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="postCategory" class="form-label text-white">Category</label>
+                            <select class="form-select" id="postCategory" required style="background: var(--input-dark); border: 1px solid var(--border-dark); color: white;">
+                                <option value="">Select a category...</option>
+                                <option value="Nightlife">🌃 Nightlife</option>
+                                <option value="Social">👥 Social</option>
+                                <option value="Food">🍕 Food</option>
+                                <option value="LFG">🎮 Looking for Group</option>
+                                <option value="Music">🎵 Music & DJs</option>
+                                <option value="Venues">📍 Venue Reviews</option>
+                                <option value="Other">💬 Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="postContent" class="form-label text-white">Content</label>
+                            <textarea class="form-control" id="postContent" rows="5" required style="background: var(--input-dark); border: 1px solid var(--border-dark); color: white;"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid var(--border-dark);">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitPostBtn" style="background: var(--primary); border: none;">
+                        <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px; font-size: 18px;">send</span>
+                        Post
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Lottie Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="js/firebase-config.js"></script>
+    
+    <!-- Navbar Component -->
+    <script src="js/navbar-component.js"></script>
+    
+    <!-- Firebase Auth Functions -->
+    <script src="js/auth.js"></script>
+    
+    <script>
+        // Initialize navbar
+        document.getElementById('navbar-container').innerHTML = createNavbar('forum');
+        initNavbarAuth();
+        
+        // Forum functionality
+        const forumPostsContainer = document.getElementById('forumPosts');
+        let loadingPosts = document.getElementById('loadingPosts');
+        let noPosts = document.getElementById('noPosts');
+        const submitPostBtn = document.getElementById('submitPostBtn');
+        const createPostForm = document.getElementById('createPostForm');
+        
+        // Ensure noPosts is hidden initially
+        if (noPosts) {
+            noPosts.style.display = 'none';
+        }
+        
+        // Load forum posts
+        async function loadForumPosts() {
+            try {
+                // Load loading animation
+                const loadingAnimationContainer = document.getElementById('loadingAnimation');
+                if (loadingAnimationContainer && loadingAnimationContainer.children.length === 0) {
+                    lottie.loadAnimation({
+                        container: loadingAnimationContainer,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: 'assets/animations/loading.json'
+                    });
+                }
+                
+                if (!window.firebaseDb) {
+                    setTimeout(loadForumPosts, 500);
+                    return;
+                }
+                
+                const postsSnapshot = await window.firebaseDb.collection('forum')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                console.log('Posts loaded, count:', postsSnapshot.size);
+                
+                // Hide loading
+                if (loadingPosts) {
+                    loadingPosts.style.display = 'none';
+                }
+                
+                if (postsSnapshot.empty) {
+                    console.log('No posts found, showing notfound animation');
+                    if (noPosts) {
+                        noPosts.style.display = 'block';
+                        // Load Lottie animation
+                        const animContainer = document.getElementById('noPostsAnimation');
+                        console.log('Animation container:', animContainer);
+                        if (animContainer) {
+                            // Clear previous animation
+                            animContainer.innerHTML = '';
+                            lottie.loadAnimation({
+                                container: animContainer,
+                                renderer: 'svg',
+                                loop: true,
+                                autoplay: true,
+                                path: 'assets/animations/notfound.json'
+                            });
+                            console.log('Notfound animation loaded');
+                        }
+                    }
+                    return;
+                }
+                
+                // Hide no posts message
+                if (noPosts) {
+                    noPosts.style.display = 'none';
+                }
+                
+                // Clear loading message and show posts
+                if (loadingPosts) {
+                    loadingPosts.remove();
+                }
+                
+                postsSnapshot.forEach(doc => {
+                    const post = { id: doc.id, ...doc.data() };
+                    forumPostsContainer.appendChild(createPostCard(post));
+                });
+                
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                
+                // Hide loading
+                const loadingPostsEl = document.getElementById('loadingPosts');
+                if (loadingPostsEl) {
+                    loadingPostsEl.style.display = 'none';
+                }
+                
+                // Show error message
+                forumPostsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <span class="material-symbols-outlined" style="font-size: 80px; opacity: 0.3; color: #f87171;">error</span>
+                        <h3 class="mt-4 mb-2 text-white">Error Loading Posts</h3>
+                        <p class="text-white-50">${error.message}</p>
+                        <button class="btn btn-primary mt-3" onclick="window.loadForumPosts()" style="background: var(--primary); border: none;">
+                            <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 8px;">refresh</span>
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Create post card
+        function createPostCard(post) {
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-4';
+            
+            const createdAt = post.createdAt ? 
+                (post.createdAt.toDate ? post.createdAt.toDate() : new Date(post.createdAt.seconds * 1000)) : 
+                new Date();
+            const timeAgo = getTimeAgo(createdAt);
+            
+            const categoryColors = {
+                'Nightlife': 'bg-purple-100 text-purple-600',
+                'Social': 'bg-pink-100 text-pink-600',
+                'Food': 'bg-orange-100 text-orange-600',
+                'LFG': 'bg-green-100 text-green-600',
+                'Music': 'bg-blue-100 text-blue-600',
+                'Venues': 'bg-yellow-100 text-yellow-600',
+                'Other': 'bg-gray-100 text-gray-600'
+            };
+            
+            const categoryClass = categoryColors[post.category] || 'bg-gray-100 text-gray-600';
+            
+            col.innerHTML = `
+                <div class="forum-card">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img src="${post.userPhotoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.userName || 'User') + '&background=392833&color=fff'}" 
+                             alt="User" class="avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                        <div>
+                            <p class="fw-bold mb-0 small text-white">${post.userName || 'Anonymous'}</p>
+                            <p class="text-white-50 small mb-0">${timeAgo}</p>
+                        </div>
+                    </div>
+                    <span class="tag-badge ${categoryClass} mb-3 d-inline-block">#${post.category || 'General'}</span>
+                    <h5 class="fw-bold mb-2 text-white">${post.title}</h5>
+                    <p class="text-white-50 small mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                        ${post.content}
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top" style="border-color: var(--border-dark) !important;">
+                        <div class="d-flex gap-4">
+                            <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1" onclick="likePost('${post.id}')">
+                                <span class="material-symbols-outlined" style="font-size: 20px;">favorite</span>
+                                <span class="small" id="likes-${post.id}">${post.likes || 0}</span>
+                            </button>
+                            <button class="btn btn-link text-white-50 p-0 d-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+                                <span class="small">${post.replies || 0}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+        
+        // Get time ago
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + ' years ago';
+            
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + ' months ago';
+            
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + ' days ago';
+            
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + ' hours ago';
+            
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + ' minutes ago';
+            
+            return 'Just now';
+        }
+        
+        // Submit post
+        submitPostBtn.addEventListener('click', async () => {
+            if (!createPostForm.checkValidity()) {
+                createPostForm.reportValidity();
+                return;
+            }
+            
+            const user = window.getCurrentUser();
+            if (!user) {
+                alert('Please sign in to create a post');
+                window.location.href = 'signin.html';
+                return;
+            }
+            
+            const title = document.getElementById('postTitle').value.trim();
+            const category = document.getElementById('postCategory').value;
+            const content = document.getElementById('postContent').value.trim();
+            
+            if (!title || !category || !content) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            submitPostBtn.disabled = true;
+            submitPostBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Posting...';
+            
+            try {
+                await window.firebaseDb.collection('forum').add({
+                    title: title,
+                    category: category,
+                    content: content,
+                    userId: user.uid,
+                    userName: user.displayName || user.email,
+                    userPhotoURL: user.photoURL || null,
+                    likes: 0,
+                    replies: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('createPostModal'));
+                modal.hide();
+                
+                // Reset form
+                createPostForm.reset();
+                
+                // Reload posts
+                forumPostsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5" id="loadingPosts">
+                        <div id="loadingAnimation" style="width: 200px; height: 200px; margin: 0 auto;"></div>
+                        <p class="text-white-50 mt-3">Loading posts...</p>
+                    </div>
+                    <div class="col-12 text-center py-5" id="noPosts" style="display: none;">
+                        <div id="noPostsAnimation" style="width: 300px; height: 200px; margin: 0 auto;"></div>
+                        <h3 class="mt-4 mb-2 text-white">No Posts Yet</h3>
+                        <p class="text-white-50">Be the first to start a discussion!</p>
+                        <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#createPostModal" style="background: var(--primary); border: none;">
+                            <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 8px;">add</span>
+                            Start New Topic
+                        </button>
+                    </div>
+                `;
+                
+                // Update references
+                loadingPosts = document.getElementById('loadingPosts');
+                noPosts = document.getElementById('noPosts');
+                
+                setTimeout(() => {
+                    loadForumPosts();
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error creating post:', error);
+                alert('Error creating post: ' + error.message);
+            } finally {
+                submitPostBtn.disabled = false;
+                submitPostBtn.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px; font-size: 18px;">send</span>Post';
+            }
+        });
+        
+        // Like post
+        async function likePost(postId) {
+            const user = window.getCurrentUser();
+            if (!user) {
+                alert('Please sign in to like posts');
+                return;
+            }
+            
+            try {
+                const postRef = window.firebaseDb.collection('forum').doc(postId);
+                const post = await postRef.get();
+                
+                if (post.exists) {
+                    const currentLikes = post.data().likes || 0;
+                    await postRef.update({
+                        likes: currentLikes + 1
+                    });
+                    
+                    // Update UI
+                    const likesEl = document.getElementById(`likes-${postId}`);
+                    if (likesEl) {
+                        likesEl.textContent = currentLikes + 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error liking post:', error);
+            }
+        }
+        
+        // Make functions global
+        window.likePost = likePost;
+        window.loadForumPosts = loadForumPosts;
+        
+        // Load posts on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadForumPosts);
+        } else {
+            loadForumPosts();
+        }
+    </script>
 </body>
 </html>
 
