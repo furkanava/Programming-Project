@@ -21,7 +21,7 @@ The application is a static web application utilizing modern front-end technolog
 | Category | Technology | Purpose |
 | :--- | :--- | :--- |
 | **Frontend** | HTML5, JavaScript | Core structure and logic |
-| **Styling** | Tailwind CSS | Utility-first CSS framework for responsive design |
+| **Styling** | Bootstrap | UI Framework |
 | **Backend** | Firebase Authentication | User registration and login |
 | **Database** | Firebase Firestore | Real-time, NoSQL database for events, users, and comments |
 | **Storage** | Firebase Storage | Storing user-uploaded content (e.g., event images) |
